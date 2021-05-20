@@ -23,7 +23,7 @@ cp config/gitlab.spc ~/.steampipe/config/gitlab.spc
 Configuration is preferably done by ensuring you have the following Environment Variables set:
 
 - `GITLAB_ADDR` for the address of your GitLab API endpoint (e.g `https://gitlab.mycompany.com/api/v4`)
-- `GITLAB_TOKEN` for the API token used to access GitLab (private or personal access tokens accepted)
+- `GITLAB_TOKEN` for the API token used to access GitLab (private or [personal access](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) tokens accepted)
 
 These can also be set in the configuration file:
 `vi ~/.steampipe/config/gitlab.spc` 

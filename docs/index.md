@@ -33,7 +33,7 @@ cp config/gitlab.spc ~/.steampipe/config/gitlab.spc
 ### Prerequisites
 
 - GitLab (either hosted or self-hosted)
-- GitLab Token (either private or personal access token)
+- GitLab Token (either private or [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html))
 
 ### Configuration
 
