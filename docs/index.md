@@ -68,3 +68,4 @@ steampipe query "select * from gitlab_version"
 The following tables are currently available, follow links for more information.
 
 - [gitlab_version](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_version.md)
+- [gitlab_user](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_user.md)
