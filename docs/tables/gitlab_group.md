@@ -19,7 +19,6 @@ Query the Groups (& SubGroups) of GitLab.
 | full_name | The full name of the group. |
 | full_path | The full path of the group |
 | parent_id | The ID of the groups parent group (for sub-groups) |
-| statistics | An array of statistics. |
 | custom_attributes | An array of custom attributes. |
 | share_with_group_lock | Can this group be shared with other groups |
 | require_two_factor_authentication | Does this group require 2fa. |

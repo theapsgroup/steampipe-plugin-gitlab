@@ -29,7 +29,6 @@ func tableGroup() *plugin.Table {
 			{Name: "full_name", Type: proto.ColumnType_STRING, Description: "The full name of the group."},
 			{Name: "full_path", Type: proto.ColumnType_STRING, Description: "The full path of the group"},
 			{Name: "parent_id", Type: proto.ColumnType_INT, Description: "The ID of the groups parent group (for sub-groups)"},
-			{Name: "statistics", Type: proto.ColumnType_JSON, Description: "An array of statistics."},
 			{Name: "custom_attributes", Type: proto.ColumnType_JSON, Description: "An array of custom attributes."},
 			{Name: "share_with_group_lock", Type: proto.ColumnType_BOOL, Description: "Can this group be shared with other groups"},
 			{Name: "require_two_factor_authentication", Type: proto.ColumnType_BOOL, Description: "Does this group require 2fa.", Transform: transform.FromField("RequireTwoFactorAuth")},
