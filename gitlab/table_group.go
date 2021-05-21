@@ -16,7 +16,7 @@ func tableGroup() *plugin.Table {
 			Hydrate: listGroups,
 		},
 		Columns: []*plugin.Column{
-			{Name: "id", Type: proto.ColumnType_INT, Description: "GitLabs internal project ID."},
+			{Name: "id", Type: proto.ColumnType_INT, Description: "GitLabs internal group ID."},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The group name."},
 			{Name: "path", Type: proto.ColumnType_STRING, Description: "The group path."},
 			{Name: "description", Type: proto.ColumnType_STRING, Description: "The groups description."},

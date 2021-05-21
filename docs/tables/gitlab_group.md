@@ -6,7 +6,7 @@ Query the Groups (& SubGroups) of GitLab.
 
 | Column | Description |
 | - | - |
-| id | GitLabs internal project ID. |
+| id | GitLabs internal group ID. |
 | name | The group name. |
 | path | The group path. |
 | description | The groups description. |

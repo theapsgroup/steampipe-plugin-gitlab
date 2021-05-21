@@ -16,7 +16,7 @@ func tableUser() *plugin.Table {
 			Hydrate: listUsers,
 		},
 		Columns: []*plugin.Column{
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "GitLabs internal user ID."},
+			{Name: "id", Type: proto.ColumnType_INT, Description: "GitLabs internal user ID."},
 			{Name: "username", Type: proto.ColumnType_STRING, Description: "The login/username of the user."},
 			{Name: "email", Type: proto.ColumnType_STRING, Description: "The primary email address of the user."},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the user."},
