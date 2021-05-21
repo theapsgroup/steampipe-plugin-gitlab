@@ -37,7 +37,7 @@ func tableProject() *plugin.Table {
 			{Name: "issues_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if project has issues enabled."},
 			{Name: "open_issues_count", Type: proto.ColumnType_INT, Description: "A count of open issues on the project.", Transform: transform.FromGo()},
 			{Name: "merge_requests_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if merge requests are enabled on the project"},
-			{Name: "approvals_before_merge", Type: proto.ColumnType_INT, Description: "The project setting for number of approvals required before a merge request can be merged."},
+			{Name: "approvals_before_merge", Type: proto.ColumnType_INT, Description: "The project setting for number of approvals required before a merge request can be merged.", Transform: transform.FromGo()},
 			{Name: "jobs_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has jobs enabled."},
 			{Name: "wiki_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has the wiki enabled."},
 			{Name: "snippets_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has snippets enabled."},
@@ -51,7 +51,7 @@ func tableProject() *plugin.Table {
 			{Name: "avatar_url", Type: proto.ColumnType_STRING, Description: "The url for the projects avatar."},
 			{Name: "forks_count", Type: proto.ColumnType_INT, Description: "The number of forks of the project.", Transform: transform.FromGo()},
 			{Name: "star_count", Type: proto.ColumnType_INT, Description: "The number of stars given to the project.", Transform: transform.FromGo()},
-			{Name: "lfs_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has large file system enabled."},
+			{Name: "lfs_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has large file system enabled.", Transform: transform.FromField("LFSEnabled")},
 			{Name: "request_access_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has request access enabled."},
 			{Name: "packages_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has packages enabled."},
 			{Name: "owner_id", Type: proto.ColumnType_INT, Description: "The projects owner ID. (null if owned by a group)", Transform: transform.FromField("Owner.ID")},
@@ -68,7 +68,7 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 10,
+		PerPage: 30,
 	}}
 
 	for {

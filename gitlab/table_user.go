@@ -65,7 +65,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 	opt := &api.ListUsersOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 10,
+		PerPage: 30,
 	}}
 
 	for {
