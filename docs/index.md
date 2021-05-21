@@ -69,3 +69,4 @@ The following tables are currently available, follow links for more information.
 
 - [gitlab_version](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_version.md)
 - [gitlab_user](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_user.md)
+- [gitlab_group](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_group.md)

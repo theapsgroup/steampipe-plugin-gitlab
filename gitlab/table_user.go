@@ -6,7 +6,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
-	"time"
 )
 
 func tableUser() *plugin.Table {
@@ -87,12 +86,4 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	}
 
 	return nil, nil
-}
-
-func isoTimeTransform(_ context.Context, input *transform.TransformData) (interface{}, error) {
-	if input.Value == nil {
-		return nil, nil
-	}
-	x := input.Value.(*api.ISOTime).String()
-	return time.Parse("2006-01-02", x)
 }

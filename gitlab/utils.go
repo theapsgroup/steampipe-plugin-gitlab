@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 	"os"
 	"strings"
+	"time"
 )
 
 func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
@@ -39,6 +41,16 @@ func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 	return client, nil
 }
 
+// sanitizeUrl is a util func for stripping accidental double slashes in urls
 func sanitizeUrl(url string) string {
 	return strings.ReplaceAll(url, "//","/")
+}
+
+// isoTimeTransform is a transformation func for *gitlab.ISOTime to *time.Time
+func isoTimeTransform(_ context.Context, input *transform.TransformData) (interface{}, error) {
+	if input.Value == nil {
+		return nil, nil
+	}
+	x := input.Value.(*api.ISOTime).String()
+	return time.Parse("2006-01-02", x)
 }
