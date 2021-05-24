@@ -21,6 +21,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project": tableProject(),
 			"gitlab_issue":   tableIssue(),
 			"gitlab_branch":  tableBranch(),
+			"gitlab_commit":  tableCommit(),
 		},
 	}
 
