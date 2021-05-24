@@ -1,13 +1,13 @@
 ---
-organization: The APS Group
+org: The APS Group
 category: ["software development"]
 icon_url: "/images/plugins/turbot/gitlab.svg"
 brand_color: "#000000"
 display_name: "GitLab"
 short_name: "gitlab"
 description: "Steampipe plugin for querying GitLab Repositories, Users and other resources."
-og_description: Query GitLab with SQL! Open source CLI. No DB required.
-og_image: "/images/plugins/turbot/gitlab-social-graphic.png"
+social_about: Query GitLab with SQL! Open source CLI. No DB required.
+social_preview: "/images/plugins/turbot/gitlab-social-graphic.png"
 ---
 
 # GitLab + Turbot Steampipe
@@ -39,7 +39,7 @@ cp config/gitlab.spc ~/.steampipe/config/gitlab.spc
 
 The preferred option is to use Environment Variables for configuration.
 
-However you can configure in the `~./steampipe/config/gitlab.spc` (this will take precedence).
+However, you can configure in the `~./steampipe/config/gitlab.spc` (this will take precedence).
 
 Environment Variables:
 - `GITLAB_ADDR` for the base url for the API endpoint (ex: `https://gitlab.mycompany.com/api/v4`)
@@ -71,3 +71,4 @@ The following tables are currently available, follow links for more information.
 - [gitlab_user](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_user.md)
 - [gitlab_group](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_group.md)
 - [gitlab_project](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_project.md)
+- [gitlab_issue](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/tables/gitlab_issue.md)

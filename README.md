@@ -34,4 +34,4 @@ Further documentation can he [found here](https://github.com/theapsgroup/steampi
 
 ## Credits
 
-GitLab API Wrapper [xanzy/go-gitlab](https://github.com/xanzy/go-gitlab) this is licensed separately using this [Apache License](https://github.com/xanzy/go-gitlab/blob/master/LICENSE)
+GitLab API Wrapper [xanzy/go-gitlab](https://github.com/xanzy/go-gitlab) (licensed separately using this [Apache License](https://github.com/xanzy/go-gitlab/blob/master/LICENSE))
