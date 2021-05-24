@@ -19,10 +19,10 @@ where
 
 ```sql
 select
-  p.name as project_name
-  p.full_path as project_path
-  b.name as branch_name
-  b.default as is_default_branch
+  p.name as project_name,
+  p.full_path as project_path,
+  b.name as branch_name,
+  b.default as is_default_branch,
   b.commit_short_id as commit_hash
 from
   gitlab_branch b
