@@ -13,7 +13,7 @@ from
   gitlab_group;
 ```
 
-## Get all top level groups
+### Get all top level groups
 
 ```sql
 select
@@ -24,7 +24,7 @@ where
   parent_id is null;
 ```
 
-## Get all private groups
+### Get all private groups
 
 ```sql
 select
