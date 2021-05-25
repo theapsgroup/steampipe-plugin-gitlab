@@ -15,13 +15,15 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		DefaultTransform: transform.FromGo().NullIfZero(),
 		TableMap: map[string]*plugin.Table{
-			"gitlab_version": tableVersion(),
-			"gitlab_user":    tableUser(),
-			"gitlab_group":   tableGroup(),
-			"gitlab_project": tableProject(),
-			"gitlab_issue":   tableIssue(),
-			"gitlab_branch":  tableBranch(),
-			"gitlab_commit":  tableCommit(),
+			"gitlab_version":               tableVersion(),
+			"gitlab_user":                  tableUser(),
+			"gitlab_group":                 tableGroup(),
+			"gitlab_project":               tableProject(),
+			"gitlab_issue":                 tableIssue(),
+			"gitlab_branch":                tableBranch(),
+			"gitlab_commit":                tableCommit(),
+			"gitlab_merge_request":         tableMergeRequest(),
+			"gitlab_project_merge_request": tableProjectMergeRequest(),
 		},
 	}
 

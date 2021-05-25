@@ -69,7 +69,7 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		}
 
 		if resp.CurrentPage >= resp.TotalPages {
-			break;
+			break
 		}
 
 		opt.Page = resp.NextPage
