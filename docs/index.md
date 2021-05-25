@@ -1,20 +1,20 @@
 ---
 org: The APS Group
 category: ["software development"]
-icon_url: "/images/plugins/turbot/gitlab.svg"
-brand_color: "#000000"
+icon_url: "/images/plugins/theapsgroup/gitlab.svg"
+brand_color: "#003A75"
 display_name: "GitLab"
 short_name: "gitlab"
 description: "Steampipe plugin for querying GitLab Repositories, Users and other resources."
 social_about: Query GitLab with SQL! Open source CLI. No DB required.
-social_preview: "/images/plugins/turbot/gitlab-social-graphic.png"
+social_preview: "/images/plugins/theapsgroup/gitlab-social-graphic.png"
 ---
 
 # GitLab + Turbot Steampipe
 
 [GitLab](https://about.gitlab.com/) is a provider of Internet hosting for software development and version control using Git. It offers the distributed version control and source code management (SCM) functionality of Git, plus its own features.
 
-[Steampipe](https://steampipe.io/) is an open source CLI tool for querying cloud APIs using SQL from [Turbot](https://turbot.com/)
+[Steampipe](https://steampipe.io/) is an open source CLI for querying cloud APIs using SQL from [Turbot](https://turbot.com/)
 
 ## Getting Started
 
