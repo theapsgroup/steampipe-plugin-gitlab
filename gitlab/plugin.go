@@ -26,6 +26,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project_merge_request": tableProjectMergeRequest(),
 			"gitlab_group_member":          tableGroupMember(),
 			"gitlab_project_member":        tableProjectMember(),
+			"gitlab_snippet":               tableSnippet(),
 		},
 	}
 
