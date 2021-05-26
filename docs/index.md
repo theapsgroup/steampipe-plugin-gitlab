@@ -1,13 +1,13 @@
 ---
-org: The APS Group
+organization: The APS Group
 category: ["software development"]
 icon_url: "/images/plugins/theapsgroup/gitlab.svg"
 brand_color: "#003A75"
 display_name: "GitLab"
 short_name: "gitlab"
 description: "Steampipe plugin for querying GitLab Repositories, Users and other resources."
-social_about: Query GitLab with SQL! Open source CLI. No DB required.
-social_preview: "/images/plugins/theapsgroup/gitlab-social-graphic.png"
+og_description: Query GitLab with SQL! Open source CLI. No DB required.
+og_image: "/images/plugins/theapsgroup/gitlab-social-graphic.png"
 ---
 
 # GitLab + Turbot Steampipe
