@@ -2,7 +2,7 @@
 organization: The APS Group
 category: ["software development"]
 icon_url: "/images/plugins/theapsgroup/gitlab.svg"
-brand_color: "#003A75"
+brand_color: "#FCA121"
 display_name: "GitLab"
 short_name: "gitlab"
 description: "Steampipe plugin for querying GitLab Repositories, Users and other resources."
