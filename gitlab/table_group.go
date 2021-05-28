@@ -6,6 +6,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
+	"strings"
 )
 
 func tableGroup() *plugin.Table {
@@ -14,6 +15,10 @@ func tableGroup() *plugin.Table {
 		Description: "Groups within GitLab",
 		List: &plugin.ListConfig{
 			Hydrate: listGroups,
+		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.SingleColumn("id"),
+			Hydrate: getGroup,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the group."},
@@ -79,4 +84,23 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	}
 
 	return nil, nil
+}
+
+func getGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	groupId := int(d.KeyColumnQuals["id"].GetInt64Value())
+
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	group, _, err := conn.Groups.GetGroup(groupId)
+	if err != nil {
+		if strings.Contains(err.Error(), "404") {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return group, nil
 }

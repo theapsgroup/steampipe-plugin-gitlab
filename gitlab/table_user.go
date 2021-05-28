@@ -6,6 +6,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
+	"strings"
 )
 
 func tableUser() *plugin.Table {
@@ -14,6 +15,10 @@ func tableUser() *plugin.Table {
 		Description: "GitLab users and relevant information",
 		List: &plugin.ListConfig{
 			Hydrate: listUsers,
+		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.SingleColumn("id"),
+			Hydrate: getUser,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the user."},
@@ -86,4 +91,25 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	}
 
 	return nil, nil
+}
+
+func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	userId := int(d.KeyColumnQuals["id"].GetInt64Value())
+
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+	var b = false
+	opt := api.GetUsersOptions{WithCustomAttributes: &b}
+
+	user, _, err := conn.Users.GetUser(userId, opt)
+	if err != nil {
+		if strings.Contains(err.Error(), "404") {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return user, nil
 }

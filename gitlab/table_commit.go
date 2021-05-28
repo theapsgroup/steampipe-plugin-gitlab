@@ -17,6 +17,10 @@ func tableCommit() *plugin.Table{
 			KeyColumns: plugin.SingleColumn("project_id"),
 			Hydrate: listCommits,
 		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.AllColumns([]string{"project_id", "id"}),
+			Hydrate: getCommit,
+		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "The ID (commit hash) of the commit."},
 			{Name: "short_id", Type: proto.ColumnType_STRING, Description: "The short ID (short commit hash) of the commit."},
@@ -73,4 +77,26 @@ func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 		opt.Page = resp.NextPage
 	}
 	return nil, nil
+}
+
+func getCommit(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
+	id := d.KeyColumnQuals["id"].GetStringValue()
+
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	commit, _, err := conn.Commits.GetCommit(projectId, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "404") {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	commit.ProjectID = projectId
+	commit.Message = strings.TrimRight(commit.Message, "\n") // remove trailing newline from commit message.
+	return commit, nil
 }

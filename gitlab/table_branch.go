@@ -35,6 +35,10 @@ func tableBranch() *plugin.Table {
 			KeyColumns: plugin.SingleColumn("project_id"),
 			Hydrate: listBranches,
 		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.AllColumns([]string{"project_id", "name"}),
+			Hydrate: getBranch,
+		},
 		Columns: []*plugin.Column{
 			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project containing the branches - link to `gitlab_project.ID`"},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the branch."},
@@ -104,4 +108,39 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	}
 
 	return nil, nil
+}
+
+func getBranch(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
+	name := d.KeyColumnQuals["name"].GetStringValue()
+
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	branch, _, err := conn.Branches.GetBranch(projectId, name)
+	if err != nil {
+		if strings.Contains(err.Error(), "404") {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &Branch{
+		ProjectID: projectId,
+		Name: branch.Name,
+		Protected: branch.Protected,
+		Merged: branch.Merged,
+		Default: branch.Default,
+		CanPush: branch.CanPush,
+		DevelopersCanPush: branch.DevelopersCanPush,
+		DevelopersCanMerge: branch.DevelopersCanMerge,
+		WebUrl: branch.WebURL,
+		CommitID: branch.Commit.ID,
+		CommitShortID: branch.Commit.ShortID,
+		CommitTitle: branch.Commit.Title,
+		CommitEmail: branch.Commit.CommitterEmail,
+		CommitDate: branch.Commit.CommittedDate,
+	}, nil
 }
