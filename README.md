@@ -1,3 +1,5 @@
+![image](https://github.com/theapsgroup/steampipe-plugin-gitlab/raw/main/docs/gitlab-plugin-social-graphic.png)
+
 # GitLab plugin for Steampipe
 
 ## Query GitLab with SQL
