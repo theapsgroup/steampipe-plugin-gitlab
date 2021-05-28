@@ -16,18 +16,16 @@ og_image: "/images/plugins/theapsgroup/gitlab-social-graphic.png"
 
 [Steampipe](https://steampipe.io/) is an open source CLI for querying cloud APIs using SQL from [Turbot](https://turbot.com/)
 
+## Documentation
+
+- [Table definitions / examples](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables)
+
 ## Getting Started
 
-### Build & Installation
-
-Currently, you will need to build and install this plugin manually via the following:
+### Installation
 
 ```shell
-go build -o steampipe-plugin-gitlab.plugin
-
-mv steampipe-plugin-gitlab.plugin ~/.steampipe/plugins/hub.steampipe.io/plugins/theapsgroup/gitlab@latest/steampipe-plugin-gitlab.plugin
-
-cp config/gitlab.spc ~/.steampipe/config/gitlab.spc
+steampipe plugin install theapsgroup/gitlab
 ```
 
 ### Prerequisites

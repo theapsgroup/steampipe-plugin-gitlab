@@ -12,7 +12,13 @@ select * from gitlab_project
 
 ## Get Started
 
-Build & Installation from source:
+### Installation
+
+```shell
+steampipe plugin install theapsgroup/gitlab
+```
+
+Or if you prefer, you can clone this repository and build/install from source directly.
 
 ```shell
 go build -o steampipe-plugin-gitlab.plugin
