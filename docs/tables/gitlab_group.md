@@ -1,6 +1,8 @@
 # Table: gitlab_group
 
-Query the Groups (& SubGroups) of GitLab.
+A group is a collection of projects & members.
+
+The `gitlab_group` table can be used to query groups (where you are a member of for authenticated user, unless authenticated user is an admin in which case, all groups will be available).
 
 ## Examples
 
@@ -13,7 +15,7 @@ from
   gitlab_group;
 ```
 
-### Get all top level groups
+### Get top level groups
 
 ```sql
 select
@@ -24,7 +26,7 @@ where
   parent_id is null;
 ```
 
-### Get all private groups
+### Get private groups
 
 ```sql
 select

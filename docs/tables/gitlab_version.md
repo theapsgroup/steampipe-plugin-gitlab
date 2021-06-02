@@ -1,6 +1,8 @@
 # Table: gitlab_version
 
-Version information about the GitLab instance.
+The `gitlab_version` table can be used to query version information about the GitLab instance.
+
+> Note: Should only return a single row of data.
 
 ## Examples
 

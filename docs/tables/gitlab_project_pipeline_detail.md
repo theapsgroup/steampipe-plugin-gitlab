@@ -1,6 +1,8 @@
 # Table: gitlab_project_pipeline_detail
 
-Obtain detailed pipeline information for a single pipeline from a single project, **you must specify** a `project_id` and an `id` (for the pipeline) in the where or join clause.
+The `gitlab_project_pipeline_detail` table can be used to query detailed information about a specific pipeline instance on a specific project.
+
+However, **you must specify** a `project_id` and an `id` (for the pipeline) in the where or join clause.
 
 ## Examples
 

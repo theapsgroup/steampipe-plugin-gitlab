@@ -2,6 +2,9 @@
 
 Obtaining information about Users on the GitLab instance.
 
+> Note: It is not advised to use this table without filtering for 
+> specific user id or username if you're using the hosted GitLab.com instance since this will attempt to obtain **ALL** users.
+
 ## Examples
 
 ### List all users

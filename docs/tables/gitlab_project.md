@@ -1,6 +1,10 @@
 # Table: gitlab_project
 
-Query projects within the GitLab instance.
+The `gitlab_project` table will obtain information from all projects the user would be able to see, public/associated.
+
+> Note: It's recommended that you use the `gitlab_my_project` table for performance.
+>
+>It is not advised to use this table if you're using the hosted GitLab.com instance since this will attempt to obtain **ALL** public projects.
 
 ## Examples
 

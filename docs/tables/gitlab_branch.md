@@ -1,6 +1,10 @@
 # Table: gitlab_branch
 
-Query information on branches although **you must specify** a `project_id` in the where or join clause.
+A branch is essentially a unique set of code changes with a unique name.
+
+The `gitlab_branch` table can be used to query information about any branch.
+
+However, **you must specify** a `project_id` in the where or join clause.
 
 ## Examples
 
@@ -27,14 +31,14 @@ select
 from
   gitlab_branch b
 inner join
-  gitlab_project p
+  gitlab_my_project p
 on
   b.project_id = p.id
 where b.project_id in (
   select
     id
   from
-    gitlab_project
+    gitlab_my_project
   where
     full_path like '%service%'
 );

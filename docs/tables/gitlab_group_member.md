@@ -1,6 +1,10 @@
 # Table: gitlab_group_member
 
-Query group members for a specific group, **you must specify** a `group_id` in the where or join clause of the query.
+A group member is a user that is associated to a specific group.
+
+The `gitlab_group_member` table can be used to query information members of a specific group.
+
+However, **you must specify** a `group_id` in the where or join clause.
 
 ## Examples
 

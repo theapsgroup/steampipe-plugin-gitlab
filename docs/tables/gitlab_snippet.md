@@ -1,6 +1,6 @@
 # Table: gitlab_snippet
 
-Query against the snippets of the currently authenticated user only.
+The `gitlab_snippet` table can be used to query information about snippets owned by the currently authenticated user.
 
 ## Examples
 

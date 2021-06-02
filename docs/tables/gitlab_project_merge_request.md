@@ -1,6 +1,8 @@
 # Table: gitlab_project_merge_request
 
-Query a specific projects merge requests, **you must specify** a `project_id` in the where or join clause.
+The `gitlab_project_merge_request` table can be used to query all merge requests against a specific project.
+
+However, **you must specify** a `project_id` in the where or join clause.
 
 ## Examples
 

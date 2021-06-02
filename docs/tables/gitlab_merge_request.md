@@ -1,9 +1,11 @@
 # Table: gitlab_merge_request
 
-Query all Merge Requests in GitLab.
+The `gitlab_merge_request` table can be used to query all merge requests in the GitLab instance.
 
 > Note: If you wish to obtain merge requests for a specific `project` 
 > you should use the dedicated `gitlab_project_merge_request` table for better performance.
+>
+> It is not advised to use this table if you're using the hosted GitLab.com instance since this will attempt to obtain **ALL** public merge requests.
 
 ## Examples
 

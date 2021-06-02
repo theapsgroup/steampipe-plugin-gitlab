@@ -1,6 +1,12 @@
 # Table: gitlab_issue
 
-Query issues within the GitLab instance.
+Issues are used to track bugs, feature requests, tasks, etc on GitLab.
+
+The `gitlab_issue` table can be used to query information against all issues in the GitLab instance.
+
+> Note: It's recommended that you use the `gitlab_my_issue` table for performance.
+> 
+>It is not advised to use this table if you're using the hosted GitLab.com instance since this will attempt to obtain **ALL** public issues.
 
 ## Examples
 
