@@ -48,7 +48,7 @@ func listSnippets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 			d.StreamListItem(ctx, snippet)
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

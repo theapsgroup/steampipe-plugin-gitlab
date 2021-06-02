@@ -68,7 +68,7 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 30,
+		PerPage: 50,
 	}}
 
 	for {
@@ -81,7 +81,7 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 			d.StreamListItem(ctx, project)
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

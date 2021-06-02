@@ -56,7 +56,7 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 	opt := &api.ListProjectMembersOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 20,
+		PerPage: 50,
 	}}
 
 	for {
@@ -80,7 +80,7 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 			})
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

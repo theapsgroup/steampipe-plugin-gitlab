@@ -73,7 +73,7 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 			})
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

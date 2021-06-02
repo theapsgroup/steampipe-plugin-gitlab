@@ -63,7 +63,7 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 	opt := &api.ListGroupsOptions{ListOptions: api.ListOptions{
 			Page: 1,
-			PerPage: 10,
+			PerPage: 30,
 	}}
 
 	for {
@@ -76,7 +76,7 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 			d.StreamListItem(ctx, group)
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

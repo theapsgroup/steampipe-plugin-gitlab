@@ -100,7 +100,7 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 			})
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

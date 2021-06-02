@@ -54,7 +54,7 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 	opt := &api.ListGroupMembersOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 20,
+		PerPage: 50,
 	}}
 
 	for {
@@ -78,7 +78,7 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 			})
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

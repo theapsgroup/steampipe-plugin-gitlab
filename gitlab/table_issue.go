@@ -54,7 +54,7 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		Scope: &defaultScope,
 		ListOptions: api.ListOptions{
 			Page: 1,
-			PerPage: 20,
+			PerPage: 50,
 		},
 	}
 
@@ -68,7 +68,7 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 			d.StreamListItem(ctx, issue)
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 

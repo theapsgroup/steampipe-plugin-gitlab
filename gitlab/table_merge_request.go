@@ -67,7 +67,7 @@ func listMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 			d.StreamListItem(ctx, mergeRequest)
 		}
 
-		if response.CurrentPage >= response.TotalPages {
+		if response.NextPage == 0 {
 			break
 		}
 

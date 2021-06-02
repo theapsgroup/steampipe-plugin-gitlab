@@ -43,7 +43,7 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 			d.StreamListItem(ctx, mergeRequest)
 		}
 
-		if response.CurrentPage >= response.TotalPages {
+		if response.NextPage == 0 {
 			break
 		}
 

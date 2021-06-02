@@ -17,7 +17,7 @@ func tableUser() *plugin.Table {
 			Hydrate: listUsers,
 		},
 		Get: &plugin.GetConfig{
-			KeyColumns: plugin.SingleColumn("id"),
+			KeyColumns: plugin.AnyColumn([]string{"id", "username"}),
 			Hydrate: getUser,
 		},
 		Columns: []*plugin.Column{
@@ -70,7 +70,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 	opt := &api.ListUsersOptions{ListOptions: api.ListOptions{
 		Page: 1,
-		PerPage: 30,
+		PerPage: 100,
 	}}
 
 	for {
@@ -83,7 +83,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 			d.StreamListItem(ctx, user)
 		}
 
-		if resp.CurrentPage >= resp.TotalPages {
+		if resp.NextPage == 0 {
 			break
 		}
 
@@ -95,21 +95,37 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	userId := int(d.KeyColumnQuals["id"].GetInt64Value())
+	userName := d.KeyColumnQuals["username"].GetStringValue()
 
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
 	}
-	var b = false
-	opt := api.GetUsersOptions{WithCustomAttributes: &b}
 
-	user, _, err := conn.Users.GetUser(userId, opt)
-	if err != nil {
-		if strings.Contains(err.Error(), "404") {
-			return nil, nil
+	if userId != 0 {
+		var b = false
+		opt := api.GetUsersOptions{WithCustomAttributes: &b}
+
+		user, _, err := conn.Users.GetUser(userId, opt)
+		if err != nil {
+			if strings.Contains(err.Error(), "404") {
+				return nil, nil
+			}
+			return nil, err
 		}
-		return nil, err
-	}
 
-	return user, nil
+		return user, nil
+	} else {
+		opt := &api.ListUsersOptions{Username: &userName, ListOptions: api.ListOptions{Page: 1, PerPage: 10}}
+		user, _, err := conn.Users.ListUsers(opt)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(user) > 0 {
+			return user[0], nil
+		}
+
+		return nil, nil
+	}
 }
