@@ -11,14 +11,14 @@ import (
 
 func tableGroup() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_group",
+		Name:        "gitlab_group",
 		Description: "Groups within GitLab",
 		List: &plugin.ListConfig{
 			Hydrate: listGroups,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
-			Hydrate: getGroup,
+			Hydrate:    getGroup,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the group."},
@@ -62,8 +62,8 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	}
 
 	opt := &api.ListGroupsOptions{ListOptions: api.ListOptions{
-			Page: 1,
-			PerPage: 30,
+		Page:    1,
+		PerPage: 30,
 	}}
 
 	for {

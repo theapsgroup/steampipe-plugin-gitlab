@@ -23,11 +23,11 @@ type GroupMember struct {
 
 func tableGroupMember() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_group_member",
+		Name:        "gitlab_group_member",
 		Description: "Group Members for a GitLab Group",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("group_id"),
-			Hydrate: listGroupMembers,
+			Hydrate:    listGroupMembers,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The id of the group member - link to `gitlab_user.id`"},
@@ -53,7 +53,7 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	groupId := int(d.KeyColumnQuals["group_id"].GetInt64Value())
 
 	opt := &api.ListGroupMembersOptions{ListOptions: api.ListOptions{
-		Page: 1,
+		Page:    1,
 		PerPage: 50,
 	}}
 
@@ -65,16 +65,16 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 		for _, member := range members {
 			d.StreamListItem(ctx, &GroupMember{
-				ID: member.ID,
-				Username: member.Username,
-				Name: member.Name,
-				State: member.State,
-				AvatarUrl: member.AvatarURL,
-				WebUrl: member.WebURL,
-				ExpiresAt: member.ExpiresAt,
+				ID:          member.ID,
+				Username:    member.Username,
+				Name:        member.Name,
+				State:       member.State,
+				AvatarUrl:   member.AvatarURL,
+				WebUrl:      member.WebURL,
+				ExpiresAt:   member.ExpiresAt,
 				AccessLevel: int(member.AccessLevel),
-				AccessDesc: parseAccessLevel(int(member.AccessLevel)),
-				GroupID: groupId,
+				AccessDesc:  parseAccessLevel(int(member.AccessLevel)),
+				GroupID:     groupId,
 			})
 		}
 

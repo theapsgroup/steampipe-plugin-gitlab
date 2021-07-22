@@ -2,14 +2,197 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
+func tableIssue() *plugin.Table {
+	return &plugin.Table{
+		Name:        "gitlab_issue",
+		Description: "All GitLab Issues",
+		List: &plugin.ListConfig{
+			Hydrate: listIssues,
+			KeyColumns: []*plugin.KeyColumn{
+				{Name: "assignee", Require: plugin.Optional},
+				{Name: "assignee_id", Require: plugin.Optional},
+				{Name: "author_id", Require: plugin.Optional},
+				{Name: "confidential", Require: plugin.Optional},
+				{Name: "project_id", Require: plugin.Optional},
+			},
+		},
+		Columns: issueColumns(),
+	}
+}
+
+// Hydrate Functions
+func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	q := d.KeyColumnQuals
+
+	if q["assignee"] == nil &&
+		q["assignee_id"] == nil &&
+		q["author_id"] == nil &&
+		q["project_id"] == nil &&
+		isPublicGitLab(d) {
+		return nil, fmt.Errorf("when using the gitlab_issue table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: 'assignee', 'assignee_id', 'author_id', 'project_id'")
+	}
+
+	if q["project_id"] != nil {
+		return listProjectIssues(ctx, d, h)
+	}
+
+	return listAllIssues(ctx, d, h)
+}
+
+func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	q := d.KeyColumnQuals
+	if q["project_id"] == nil {
+		return nil, nil
+	}
+
+	defaultScope := "all"
+	opt := &api.ListProjectIssuesOptions{
+		Scope: &defaultScope,
+		ListOptions: api.ListOptions{
+			Page:    1,
+			PerPage: 50,
+		},
+	}
+
+	opt = addOptionalProjectIssueQualifiers(opt, q)
+	projectId := int(q["project_id"].GetInt64Value())
+
+	for {
+		issues, resp, err := conn.Issues.ListProjectIssues(projectId, opt)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, issue := range issues {
+			d.StreamListItem(ctx, issue)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		opt.Page = resp.NextPage
+	}
+
+	return nil, nil
+}
+
+func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	q := d.KeyColumnQuals
+	defaultScope := "all"
+	opt := &api.ListIssuesOptions{
+		Scope: &defaultScope,
+		ListOptions: api.ListOptions{
+			Page:    1,
+			PerPage: 50,
+		},
+	}
+	opt = addOptionalIssueQualifiers(opt, q)
+
+	for {
+		issues, resp, err := conn.Issues.ListIssues(opt)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, issue := range issues {
+			d.StreamListItem(ctx, issue)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+
+	return nil, nil
+}
+
+// Assist Functions
+func addOptionalProjectIssueQualifiers(opts *api.ListProjectIssuesOptions, q map[string]*proto.QualValue) *api.ListProjectIssuesOptions {
+	if q["assignee"] != nil {
+		assignee := q["assignee"].GetStringValue()
+		opts.AssigneeUsername = &assignee
+	}
+
+	if q["assignee_id"] != nil {
+		assigneeId := int(q["assignee_id"].GetInt64Value())
+		opts.AssigneeID = &assigneeId
+	}
+
+	if q["author_id"] != nil {
+		authorId := int(q["author_id"].GetInt64Value())
+		opts.AuthorID = &authorId
+	}
+
+	if q["confidential"] != nil {
+		confidential := q["confidential"].GetBoolValue()
+		opts.Confidential = &confidential
+	}
+
+	return opts
+}
+
+func addOptionalIssueQualifiers(opts *api.ListIssuesOptions, q map[string]*proto.QualValue) *api.ListIssuesOptions {
+	if q["assignee"] != nil {
+		assignee := q["assignee"].GetStringValue()
+		opts.AssigneeUsername = &assignee
+	}
+
+	if q["assignee_id"] != nil {
+		assigneeId := int(q["assignee_id"].GetInt64Value())
+		opts.AssigneeID = &assigneeId
+	}
+
+	if q["author_id"] != nil {
+		authorId := int(q["author_id"].GetInt64Value())
+		opts.AuthorID = &authorId
+	}
+
+	if q["confidential"] != nil {
+		confidential := q["confidential"].GetBoolValue()
+		opts.Confidential = &confidential
+	}
+
+	return opts
+}
+
+// Transform Functions
+func parseAssignees(ctx context.Context, input *transform.TransformData) (interface{}, error) {
+	if input.Value == nil {
+		return nil, nil
+	}
+
+	assignees := input.Value.([]*api.IssueAssignee)
+	var output []string
+
+	for _, assignee := range assignees {
+		output = append(output, assignee.Username)
+	}
+
+	return output, nil
+}
+
+// Column Functions
 func issueColumns() []*plugin.Column {
-	return []*plugin.Column {
+	return []*plugin.Column{
 		{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the Issue."},
 		{Name: "title", Type: proto.ColumnType_STRING, Description: "The title of the Issue."},
 		{Name: "description", Type: proto.ColumnType_STRING, Description: "The description of the Issue."},
@@ -33,67 +216,4 @@ func issueColumns() []*plugin.Column {
 		{Name: "confidential", Type: proto.ColumnType_BOOL, Description: "Indicates if the issue is marked as confidential."},
 		{Name: "discussion_locked", Type: proto.ColumnType_BOOL, Description: "Indicates if the issue has the discussions locked against new input."},
 	}
-}
-
-func tableIssue() *plugin.Table {
-	return &plugin.Table{
-		Name: "gitlab_issue",
-		Description: "All GitLab Issues",
-		List: &plugin.ListConfig{
-			Hydrate: listIssues,
-		},
-		Columns: issueColumns(),
-	}
-}
-
-func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		return nil, err
-	}
-
-	defaultScope := "all"
-
-	opt := &api.ListIssuesOptions{
-		Scope: &defaultScope,
-		ListOptions: api.ListOptions{
-			Page: 1,
-			PerPage: 50,
-		},
-	}
-
-	for {
-		issues, resp, err := conn.Issues.ListIssues(opt)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, issue := range issues {
-			d.StreamListItem(ctx, issue)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-
-		opt.Page = resp.NextPage
-	}
-
-	return nil, nil
-}
-
-// Transform Functions
-func parseAssignees(ctx context.Context, input *transform.TransformData) (interface{}, error) {
-	if input.Value == nil {
-		return nil, nil
-	}
-	
-	assignees := input.Value.([]*api.IssueAssignee)
-	var output []string
-	
-	for _, assignee := range assignees {
-		output = append(output, assignee.Username)
-	}
-
-	return output, nil
 }

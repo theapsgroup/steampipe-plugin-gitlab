@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const publicGitLabBaseUrl = "https://gitlab.com/api/v4"
+
 func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 
 	baseUrl := os.Getenv("GITLAB_ADDR")
@@ -27,7 +29,7 @@ func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 	}
 
 	if baseUrl == "" {
-		return nil, fmt.Errorf("GitLab Base Address must be set either in GITLAB_ADDR env var or in connection config file")
+		baseUrl = publicGitLabBaseUrl // Default to public GitLab if not set, rather than return an error.
 	}
 	if token == "" {
 		return nil, fmt.Errorf("GitLab Private/Personal Access Token must be set either in GITLAB_TOKEN env var or in connection config file")
@@ -43,7 +45,7 @@ func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 
 // sanitizeUrl is a util func for stripping accidental double slashes in urls
 func sanitizeUrl(url string) string {
-	return strings.ReplaceAll(url, "//","/")
+	return strings.ReplaceAll(url, "//", "/")
 }
 
 // isoTimeTransform is a transformation func for *gitlab.ISOTime to *time.Time
@@ -75,4 +77,16 @@ func parseAccessLevel(input int) string {
 	default:
 		return "No Permissions"
 	}
+}
+
+// isPublicGitLab is a util function to determine if the API is the public GitLab
+func isPublicGitLab(d *plugin.QueryData) bool {
+	cfg := GetConfig(d.Connection)
+	if &cfg != nil {
+		if cfg.BaseUrl != nil && *cfg.BaseUrl == publicGitLabBaseUrl {
+			return true
+		}
+	}
+
+	return false
 }

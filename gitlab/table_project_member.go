@@ -25,11 +25,11 @@ type ProjectMember struct {
 
 func tableProjectMember() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_project_member",
+		Name:        "gitlab_project_member",
 		Description: "Project Members for a GitLab Project",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("project_id"),
-			Hydrate: listProjectMembers,
+			Hydrate:    listProjectMembers,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The id of the project member - link to `gitlab_user.id`"},
@@ -55,7 +55,7 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
 
 	opt := &api.ListProjectMembersOptions{ListOptions: api.ListOptions{
-		Page: 1,
+		Page:    1,
 		PerPage: 50,
 	}}
 
@@ -67,16 +67,16 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 		for _, member := range members {
 			d.StreamListItem(ctx, &ProjectMember{
-				ID: member.ID,
-				Username: member.Username,
-				Name: member.Name,
-				State: member.State,
-				AvatarUrl: member.AvatarURL,
-				WebUrl: member.WebURL,
-				ExpiresAt: member.ExpiresAt,
+				ID:          member.ID,
+				Username:    member.Username,
+				Name:        member.Name,
+				State:       member.State,
+				AvatarUrl:   member.AvatarURL,
+				WebUrl:      member.WebURL,
+				ExpiresAt:   member.ExpiresAt,
 				AccessLevel: int(member.AccessLevel),
-				AccessDesc: parseAccessLevel(int(member.AccessLevel)),
-				ProjectID: projectId,
+				AccessDesc:  parseAccessLevel(int(member.AccessLevel)),
+				ProjectID:   projectId,
 			})
 		}
 

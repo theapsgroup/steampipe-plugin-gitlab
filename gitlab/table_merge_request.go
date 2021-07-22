@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
@@ -10,19 +11,26 @@ import (
 
 func tableMergeRequest() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_merge_request",
+		Name:        "gitlab_merge_request",
 		Description: "All GitLab Merge Requests",
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.AllColumns([]string{"iid", "project_id"}),
-			Hydrate: getMergeRequest,
+			Hydrate:    getMergeRequest,
 		},
 		List: &plugin.ListConfig{
 			Hydrate: listMergeRequests,
+			KeyColumns: []*plugin.KeyColumn{
+				{Name: "project_id", Require: plugin.Optional},
+				{Name: "author_id", Require: plugin.Optional},
+				{Name: "assignee_id", Require: plugin.Optional},
+				{Name: "reviewer_id", Require: plugin.Optional},
+			},
 		},
 		Columns: gitlabMergeRequestColumns(),
 	}
 }
 
+// Hydrate Functions
 func getMergeRequest(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	conn, err := connect(ctx, d)
 	if err != nil {
@@ -42,19 +50,105 @@ func getMergeRequest(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 }
 
 func listMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	q := d.KeyColumnQuals
+
+	if q["project_id"] == nil &&
+		q["assignee_id"] == nil &&
+		q["author_id"] == nil &&
+		q["reviewer_id"] == nil &&
+		isPublicGitLab(d) {
+		return nil, fmt.Errorf("when using the gitlab_merge_request table with GitLab Cloud, `List`" +
+			"call requires an '=' qualifier for one or more of the following columns: 'project_id', 'author_id', 'assignee_id', 'reviewer_id'")
+	}
+
+	if q["project_id"] != nil {
+		return listProjectMergeRequests(ctx, d, h)
+	}
+
+	return listAllMergeRequests(ctx, d, h)
+}
+
+func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+	q := d.KeyColumnQuals
+
+	projectId := int(q["project_id"].GetInt64Value())
+
+	opt := &api.ListProjectMergeRequestsOptions{
+		ListOptions: api.ListOptions{
+			Page:    1,
+			PerPage: 50,
+		},
+	}
+
+	if q["assignee_id"] != nil {
+		assigneeId := int(q["assignee_id"].GetInt64Value())
+		opt.AssigneeID = &assigneeId
+	}
+
+	if q["author_id"] != nil {
+		authorId := int(q["author_id"].GetInt64Value())
+		opt.AuthorID = &authorId
+	}
+
+	if q["reviewer_id"] != nil {
+		reviewerId := int(q["reviewer_id"].GetInt64Value())
+		opt.ReviewerID = &reviewerId
+	}
+
+	for {
+		mergeRequests, response, err := conn.MergeRequests.ListProjectMergeRequests(projectId, opt)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, mergeRequest := range mergeRequests {
+			d.StreamListItem(ctx, mergeRequest)
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
+
+		opt.Page = response.NextPage
+	}
+
+	return nil, nil
+}
+
+func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
 	}
 
+	q := d.KeyColumnQuals
 	defaultScope := "all"
 
 	opt := &api.ListMergeRequestsOptions{
 		Scope: &defaultScope,
 		ListOptions: api.ListOptions{
-			Page: 1,
-			PerPage: 30,
+			Page:    1,
+			PerPage: 50,
 		},
+	}
+
+	if q["assignee_id"] != nil {
+		assigneeId := int(q["assignee_id"].GetInt64Value())
+		opt.AssigneeID = &assigneeId
+	}
+
+	if q["author_id"] != nil {
+		authorId := int(q["author_id"].GetInt64Value())
+		opt.AuthorID = &authorId
+	}
+
+	if q["reviewer_id"] != nil {
+		reviewerId := int(q["reviewer_id"].GetInt64Value())
+		opt.ReviewerID = &reviewerId
 	}
 
 	for {
@@ -141,5 +235,6 @@ func gitlabMergeRequestColumns() []*plugin.Column {
 		{Name: "approvals_before_merge", Type: proto.ColumnType_INT, Description: "The number of approvals required before merge can proceed.", Transform: transform.FromGo()},
 		{Name: "reference", Type: proto.ColumnType_STRING, Description: "The reference code of the merge request (example: `!4`."},
 		{Name: "has_conflicts", Type: proto.ColumnType_BOOL, Description: "Indicates if the merge request has conflicts with the target_branch."},
+		{Name: "reviewer_id", Type: proto.ColumnType_INT, Description: "", Transform: transform.FromQual("reviewer_id").NullIfZero()},
 	}
 }

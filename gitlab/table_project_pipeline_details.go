@@ -10,24 +10,24 @@ import (
 )
 
 type ProjectPipelineDetails struct {
-	ID             int
-	Status         string
-	Ref            string
-	SHA            string
-	BeforeSHA      string
-	Tag            bool
-	YamlErrors     string
-	UserID         int
-	Username       string
-	UpdatedAt      *time.Time
-	CreatedAt      *time.Time
-	StartedAt      *time.Time
-	FinishedAt     *time.Time
-	CommittedAt    *time.Time
-	Duration       int
-	Coverage       string
-	WebURL         string
-	ProjectID      int
+	ID          int
+	Status      string
+	Ref         string
+	SHA         string
+	BeforeSHA   string
+	Tag         bool
+	YamlErrors  string
+	UserID      int
+	Username    string
+	UpdatedAt   *time.Time
+	CreatedAt   *time.Time
+	StartedAt   *time.Time
+	FinishedAt  *time.Time
+	CommittedAt *time.Time
+	Duration    int
+	Coverage    string
+	WebURL      string
+	ProjectID   int
 }
 
 func tableProjectPipelineDetail() *plugin.Table {
@@ -79,24 +79,24 @@ func listProjectPipelineDetails(ctx context.Context, d *plugin.QueryData, h *plu
 	}
 
 	d.StreamListItem(ctx, &ProjectPipelineDetails{
-		ID: pipeline.ID,
-		Status: pipeline.Status,
-		Ref: pipeline.Ref,
-		SHA: pipeline.SHA,
-		BeforeSHA: pipeline.BeforeSHA,
-		Tag: pipeline.Tag,
-		YamlErrors: pipeline.YamlErrors,
-		UserID: pipeline.User.ID,
-		Username: pipeline.User.Username,
-		CreatedAt: pipeline.CreatedAt,
-		UpdatedAt: pipeline.UpdatedAt,
-		StartedAt: pipeline.StartedAt,
-		FinishedAt: pipeline.FinishedAt,
+		ID:          pipeline.ID,
+		Status:      pipeline.Status,
+		Ref:         pipeline.Ref,
+		SHA:         pipeline.SHA,
+		BeforeSHA:   pipeline.BeforeSHA,
+		Tag:         pipeline.Tag,
+		YamlErrors:  pipeline.YamlErrors,
+		UserID:      pipeline.User.ID,
+		Username:    pipeline.User.Username,
+		CreatedAt:   pipeline.CreatedAt,
+		UpdatedAt:   pipeline.UpdatedAt,
+		StartedAt:   pipeline.StartedAt,
+		FinishedAt:  pipeline.FinishedAt,
 		CommittedAt: pipeline.CommittedAt,
-		Duration: pipeline.Duration,
-		Coverage: pipeline.Coverage,
-		WebURL: pipeline.WebURL,
-		ProjectID: projectId,
+		Duration:    pipeline.Duration,
+		Coverage:    pipeline.Coverage,
+		WebURL:      pipeline.WebURL,
+		ProjectID:   projectId,
 	})
 
 	return nil, nil

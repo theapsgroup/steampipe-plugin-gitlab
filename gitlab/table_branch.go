@@ -29,15 +29,15 @@ type Branch struct {
 
 func tableBranch() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_branch",
+		Name:        "gitlab_branch",
 		Description: "Branches in the given project.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("project_id"),
-			Hydrate: listBranches,
+			Hydrate:    listBranches,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.AllColumns([]string{"project_id", "name"}),
-			Hydrate: getBranch,
+			Hydrate:    getBranch,
 		},
 		Columns: []*plugin.Column{
 			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project containing the branches - link to `gitlab_project.ID`"},
@@ -67,7 +67,7 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	}
 
 	opt := &api.ListBranchesOptions{ListOptions: api.ListOptions{
-		Page: 1,
+		Page:    1,
 		PerPage: 10,
 	}}
 
@@ -83,20 +83,20 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 		for _, branch := range branches {
 			d.StreamListItem(ctx, &Branch{
-				ProjectID: projectId,
-				Name: branch.Name,
-				Protected: branch.Protected,
-				Merged: branch.Merged,
-				Default: branch.Default,
-				CanPush: branch.CanPush,
-				DevelopersCanPush: branch.DevelopersCanPush,
+				ProjectID:          projectId,
+				Name:               branch.Name,
+				Protected:          branch.Protected,
+				Merged:             branch.Merged,
+				Default:            branch.Default,
+				CanPush:            branch.CanPush,
+				DevelopersCanPush:  branch.DevelopersCanPush,
 				DevelopersCanMerge: branch.DevelopersCanMerge,
-				WebUrl: branch.WebURL,
-				CommitID: branch.Commit.ID,
-				CommitShortID: branch.Commit.ShortID,
-				CommitTitle: branch.Commit.Title,
-				CommitEmail: branch.Commit.CommitterEmail,
-				CommitDate: branch.Commit.CommittedDate,
+				WebUrl:             branch.WebURL,
+				CommitID:           branch.Commit.ID,
+				CommitShortID:      branch.Commit.ShortID,
+				CommitTitle:        branch.Commit.Title,
+				CommitEmail:        branch.Commit.CommitterEmail,
+				CommitDate:         branch.Commit.CommittedDate,
 			})
 		}
 
@@ -128,19 +128,19 @@ func getBranch(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	}
 
 	return &Branch{
-		ProjectID: projectId,
-		Name: branch.Name,
-		Protected: branch.Protected,
-		Merged: branch.Merged,
-		Default: branch.Default,
-		CanPush: branch.CanPush,
-		DevelopersCanPush: branch.DevelopersCanPush,
+		ProjectID:          projectId,
+		Name:               branch.Name,
+		Protected:          branch.Protected,
+		Merged:             branch.Merged,
+		Default:            branch.Default,
+		CanPush:            branch.CanPush,
+		DevelopersCanPush:  branch.DevelopersCanPush,
 		DevelopersCanMerge: branch.DevelopersCanMerge,
-		WebUrl: branch.WebURL,
-		CommitID: branch.Commit.ID,
-		CommitShortID: branch.Commit.ShortID,
-		CommitTitle: branch.Commit.Title,
-		CommitEmail: branch.Commit.CommitterEmail,
-		CommitDate: branch.Commit.CommittedDate,
+		WebUrl:             branch.WebURL,
+		CommitID:           branch.Commit.ID,
+		CommitShortID:      branch.Commit.ShortID,
+		CommitTitle:        branch.Commit.Title,
+		CommitEmail:        branch.Commit.CommitterEmail,
+		CommitDate:         branch.Commit.CommittedDate,
 	}, nil
 }
