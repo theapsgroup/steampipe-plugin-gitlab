@@ -50,7 +50,7 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
 
 	opt := &api.ListProjectPipelinesOptions{ListOptions: api.ListOptions{
-		Page: 1,
+		Page:    1,
 		PerPage: 20,
 	}}
 
@@ -62,11 +62,11 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 		for _, pipeline := range pipelines {
 			d.StreamListItem(ctx, &ProjectPipeline{
-				ID: pipeline.ID,
-				Status: pipeline.Status,
-				Ref: pipeline.Ref,
-				SHA: pipeline.SHA,
-				WebURL: pipeline.WebURL,
+				ID:        pipeline.ID,
+				Status:    pipeline.Status,
+				Ref:       pipeline.Ref,
+				SHA:       pipeline.SHA,
+				WebURL:    pipeline.WebURL,
 				CreatedAt: pipeline.CreatedAt,
 				UpdatedAt: pipeline.UpdatedAt,
 				ProjectID: projectId,

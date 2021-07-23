@@ -8,14 +8,14 @@ import (
 
 func tableMyProject() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_my_project",
+		Name:        "gitlab_my_project",
 		Description: "Projects in the GitLab Instance where authenticated user is a member.",
 		List: &plugin.ListConfig{
 			Hydrate: listMyProjects,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
-			Hydrate: getMyProject,
+			Hydrate:    getMyProject,
 		},
 		Columns: projectColumns(),
 	}
@@ -32,7 +32,7 @@ func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	opt := &api.ListProjectsOptions{
 		Membership: &membership,
 		ListOptions: api.ListOptions{
-			Page: 1,
+			Page:    1,
 			PerPage: 50,
 		},
 	}

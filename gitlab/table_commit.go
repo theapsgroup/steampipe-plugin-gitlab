@@ -9,17 +9,17 @@ import (
 	"strings"
 )
 
-func tableCommit() *plugin.Table{
+func tableCommit() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_commit",
+		Name:        "gitlab_commit",
 		Description: "Commits in the given project.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("project_id"),
-			Hydrate: listCommits,
+			Hydrate:    listCommits,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.AllColumns([]string{"project_id", "id"}),
-			Hydrate: getCommit,
+			Hydrate:    getCommit,
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "The ID (commit hash) of the commit."},
@@ -50,7 +50,7 @@ func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 	}
 
 	opt := &api.ListCommitsOptions{All: &getAll, ListOptions: api.ListOptions{
-		Page: 1,
+		Page:    1,
 		PerPage: 50,
 	}}
 

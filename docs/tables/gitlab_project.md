@@ -2,9 +2,12 @@
 
 The `gitlab_project` table will obtain information from all projects the user would be able to see, public/associated.
 
-> Note: It's recommended that you use the `gitlab_my_project` table for performance.
+> Note: When used with the [Public GitLab](https://gitlab.com) you must specify an `=` qualifier for at least one of the following fields.
+> - `id`
+> - `owner_id`
+> - `owner_username`
 >
->It is not advised to use this table if you're using the hosted GitLab.com instance since this will attempt to obtain **ALL** public projects.
+> This is to prevent attempting to return ALL public projects which would result in an error.
 
 ## Examples
 

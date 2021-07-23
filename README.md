@@ -36,6 +36,8 @@ Configuration is preferably done by ensuring you have the following Environment 
 These can also be set in the configuration file:
 `vi ~/.steampipe/config/gitlab.spc` 
 
+> Note: If `GITLAB_ADDR` (`baseurl` in the config file) is not set it will default to the public cloud-hosted GitLab instance -> https://gitlab.com/api/v4
+
 ## Documentation
 
 Further documentation can he [found here](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/index.md)

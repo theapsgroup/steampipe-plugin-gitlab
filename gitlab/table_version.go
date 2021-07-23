@@ -8,7 +8,7 @@ import (
 
 func tableVersion() *plugin.Table {
 	return &plugin.Table{
-		Name: "gitlab_version",
+		Name:        "gitlab_version",
 		Description: "GitLab version information",
 		List: &plugin.ListConfig{
 			Hydrate: listVersion,

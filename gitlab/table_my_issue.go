@@ -23,9 +23,9 @@ func listMyIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		return nil, err
 	}
 
-	createdByScope    := "created_by_me"
-	assignedToScope   := "assigned_to_me"
-	createdByOptions  := &api.ListIssuesOptions{Scope: &createdByScope, ListOptions: api.ListOptions{Page: 1, PerPage: 50}}
+	createdByScope := "created_by_me"
+	assignedToScope := "assigned_to_me"
+	createdByOptions := &api.ListIssuesOptions{Scope: &createdByScope, ListOptions: api.ListOptions{Page: 1, PerPage: 50}}
 	assignedToOptions := &api.ListIssuesOptions{Scope: &assignedToScope, ListOptions: api.ListOptions{Page: 1, PerPage: 50}}
 
 	for {

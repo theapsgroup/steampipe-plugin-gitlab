@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
@@ -10,8 +11,135 @@ import (
 
 // TODO: Figure out being able to use full_path as a key for the get function, currently seems to fail in gitlab api wrapper.
 
+func tableProject() *plugin.Table {
+	return &plugin.Table{
+		Name:        "gitlab_project",
+		Description: "Projects in the GitLab instance.",
+		List: &plugin.ListConfig{
+			Hydrate: listProjects,
+			KeyColumns: []*plugin.KeyColumn{
+				{Name: "owner_id", Require: plugin.Optional},
+				{Name: "owner_username", Require: plugin.Optional},
+			},
+		},
+		Get: &plugin.GetConfig{
+			KeyColumns: plugin.SingleColumn("id"),
+			Hydrate:    getProject,
+		},
+		Columns: projectColumns(),
+	}
+}
+
+// Hydrate Functions
+func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	q := d.KeyColumnQuals
+
+	if q["owner_id"] == nil &&
+		q["owner_username"] == nil &&
+		isPublicGitLab(d) {
+		return nil, fmt.Errorf("when using the gitlab_project table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: " +
+			"'id', 'owner_id', 'owner_username'")
+	}
+
+	if q["owner_id"] != nil || q["owner_username"] != nil {
+		return listUserProjects(ctx, d, h)
+	}
+
+	return listAllProjects(ctx, d, h)
+}
+
+func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	q := d.KeyColumnQuals
+
+	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
+		Page:    1,
+		PerPage: 50,
+	}}
+
+	var x interface{}
+	if q["owner_id"] != nil {
+		x = int(q["owner_id"].GetInt64Value())
+	} else {
+		x = q["owner_username"].GetStringValue()
+	}
+
+	for {
+		projects, resp, err := conn.Projects.ListUserProjects(x, opt)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, project := range projects {
+			d.StreamListItem(ctx, project)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		opt.Page = resp.NextPage
+	}
+
+	return nil, nil
+}
+
+func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
+		Page:    1,
+		PerPage: 50,
+	}}
+
+	for {
+		projects, resp, err := conn.Projects.ListProjects(opt)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, project := range projects {
+			d.StreamListItem(ctx, project)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		opt.Page = resp.NextPage
+	}
+
+	return nil, nil
+}
+
+func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	q := d.KeyColumnQuals
+	id := int(q["id"].GetInt64Value())
+
+	opt := &api.GetProjectOptions{}
+
+	project, _, err := conn.Projects.GetProject(id, opt)
+	if err != nil {
+		return nil, err
+	}
+	return project, nil
+}
+
+// Column Functions
 func projectColumns() []*plugin.Column {
-	return []*plugin.Column {
+	return []*plugin.Column{
 		{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the project."},
 		{Name: "name", Type: proto.ColumnType_STRING, Description: "The projects name."},
 		{Name: "path", Type: proto.ColumnType_STRING, Description: "The projects path."},
@@ -46,67 +174,4 @@ func projectColumns() []*plugin.Column {
 		{Name: "owner_id", Type: proto.ColumnType_INT, Description: "The projects owner ID. (null if owned by a group) - link to `gitlab_user.id`", Transform: transform.FromField("Owner.ID")},
 		{Name: "owner_username", Type: proto.ColumnType_STRING, Description: "The projects owner username. (null if owned by a group) - link to `gitlab_user.username`", Transform: transform.FromField("Owner.Username")},
 	}
-}
-
-func tableProject() *plugin.Table {
-	return &plugin.Table{
-		Name: "gitlab_project",
-		Description: "Projects in the GitLab instance.",
-		List: &plugin.ListConfig{
-			Hydrate: listProjects,
-		},
-		Get: &plugin.GetConfig{
-			KeyColumns: plugin.SingleColumn("id"),
-			Hydrate: getProject,
-		},
-		Columns: projectColumns(),
-	}
-}
-
-func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		return nil, err
-	}
-
-	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
-		Page: 1,
-		PerPage: 50,
-	}}
-
-	for {
-		projects, resp, err := conn.Projects.ListProjects(opt)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, project := range projects {
-			d.StreamListItem(ctx, project)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-
-		opt.Page = resp.NextPage
-	}
-
-	return nil, nil
-}
-
-func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		return nil, err
-	}
-	q := d.KeyColumnQuals
-	id := int(q["id"].GetInt64Value())
-
-	opt := &api.GetProjectOptions{}
-
-	project, _, err := conn.Projects.GetProject(id, opt)
-	if err != nil {
-		return nil, err
-	}
-	return project, nil
 }
