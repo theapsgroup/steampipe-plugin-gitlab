@@ -28,6 +28,7 @@ func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	}
 
 	membership := true
+	stats := true
 
 	opt := &api.ListProjectsOptions{
 		Membership: &membership,
@@ -35,6 +36,7 @@ func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 			Page:    1,
 			PerPage: 50,
 		},
+		Statistics: &stats,
 	}
 
 	for {
@@ -64,8 +66,9 @@ func getMyProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	}
 	q := d.KeyColumnQuals
 	id := int(q["id"].GetInt64Value())
+	stats := true
 
-	opt := &api.GetProjectOptions{}
+	opt := &api.GetProjectOptions{Statistics: &stats}
 
 	project, _, err := conn.Projects.GetProject(id, opt)
 	if err != nil {

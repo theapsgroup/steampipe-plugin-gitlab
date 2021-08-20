@@ -55,11 +55,14 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	}
 
 	q := d.KeyColumnQuals
+	stats := true
 
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
-	}}
+		},
+		Statistics: &stats,
+	}
 
 	var x interface{}
 	if q["owner_id"] != nil {
@@ -94,10 +97,13 @@ func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		return nil, err
 	}
 
+	stats := true
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
-	}}
+		},
+		Statistics: &stats,
+	}
 
 	for {
 		projects, resp, err := conn.Projects.ListProjects(opt)
@@ -127,8 +133,11 @@ func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 	q := d.KeyColumnQuals
 	id := int(q["id"].GetInt64Value())
+	stats := true
 
-	opt := &api.GetProjectOptions{}
+	opt := &api.GetProjectOptions{
+		Statistics: &stats,
+	}
 
 	project, _, err := conn.Projects.GetProject(id, opt)
 	if err != nil {
@@ -173,5 +182,10 @@ func projectColumns() []*plugin.Column {
 		{Name: "packages_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if the project has packages enabled."},
 		{Name: "owner_id", Type: proto.ColumnType_INT, Description: "The projects owner ID. (null if owned by a group) - link to `gitlab_user.id`", Transform: transform.FromField("Owner.ID")},
 		{Name: "owner_username", Type: proto.ColumnType_STRING, Description: "The projects owner username. (null if owned by a group) - link to `gitlab_user.username`", Transform: transform.FromField("Owner.Username")},
+		{Name: "commit_count", Type: proto.ColumnType_INT, Description: "The number of commits on the project.", Transform: transform.FromField("Statistics.CommitCount")},
+		{Name: "storage_size", Type: proto.ColumnType_INT, Description: "The size of the project on disk.", Transform: transform.FromField("Statistics.StorageStatistics.StorageSize")},
+		{Name: "repository_size", Type: proto.ColumnType_INT, Description: "The size of the projects repository on disk.", Transform: transform.FromField("Statistics.StorageStatistics.RepositorySize")},
+		{Name: "lfs_objects_size", Type: proto.ColumnType_INT, Description: "The size of the projects LFS objects on disk.", Transform: transform.FromField("Statistics.StorageStatistics.LfsObjectsSize")},
+		{Name: "job_artifacts_size", Type: proto.ColumnType_INT, Description: "The size of projects job artifacts on disk.", Transform: transform.FromField("Statistics.StorageStatistics.JobArtifactsSize")},
 	}
 }
