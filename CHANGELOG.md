@@ -1,3 +1,9 @@
+## v0.0.3 [WIP]
+
+_Enhancements_
+
+- Updated: Added `commit_count`, `storage_size`, `repository_size`, `lfs_objects_size` & `job_artifacts_size` columns to `gitlab_project` & `gitlab_my_project` tables ([#5](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/5))
+
 ## v0.0.2 [2021-07-23]
 
 _What's new?_
