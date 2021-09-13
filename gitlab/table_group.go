@@ -88,13 +88,14 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 func getGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	groupId := int(d.KeyColumnQuals["id"].GetInt64Value())
+	opts := &api.GetGroupOptions{}
 
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
 	}
 
-	group, _, err := conn.Groups.GetGroup(groupId)
+	group, _, err := conn.Groups.GetGroup(groupId, opts)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			return nil, nil

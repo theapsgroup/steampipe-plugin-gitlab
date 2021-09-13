@@ -2,6 +2,8 @@
 
 _Enhancements_
 
+- Updated: Recompiled with [steampipe-plugin-sdk v1.5.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v151--2021-09-13)
+- Updated: Recompiled with [go-gitlab v0.50.4](https://github.com/xanzy/go-gitlab/releases/tag/v0.50.4)
 - Updated: Added `commit_count`, `storage_size`, `repository_size`, `lfs_objects_size` & `job_artifacts_size` columns to `gitlab_project` & `gitlab_my_project` tables ([#5](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/5))
 
 ## v0.0.2 [2021-07-23]
