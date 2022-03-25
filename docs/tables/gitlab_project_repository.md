@@ -16,3 +16,29 @@ from
 where
   project_id = 123;  
 ```
+
+### List all files for a project repository
+
+```sql
+select
+  *
+from
+  gitlab_project_repository
+where
+  project_id = 123
+and 
+  type = 'blob'
+```
+
+### List all folders for a project repository
+
+```sql
+select
+  *
+from
+  gitlab_project_repository
+where
+  project_id = 123
+and 
+  type = 'tree'
+```
