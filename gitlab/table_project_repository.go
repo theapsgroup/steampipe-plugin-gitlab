@@ -18,10 +18,6 @@ func tableProjectRepository() *plugin.Table {
 					Name:    "project_id",
 					Require: plugin.Required,
 				},
-				{
-					Name:    "parent_path",
-					Require: plugin.Optional,
-				},
 			},
 			Hydrate: listRepositoryTree,
 		},
