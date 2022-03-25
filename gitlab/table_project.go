@@ -60,7 +60,7 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
-		},
+	},
 		Statistics: &stats,
 	}
 
@@ -101,7 +101,7 @@ func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
-		},
+	},
 		Statistics: &stats,
 	}
 
