@@ -85,8 +85,8 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 	}
 
 	if q["assignee_id"] != nil {
-		assigneeId := int(q["assignee_id"].GetInt64Value())
-		opt.AssigneeID = &assigneeId
+		assigneeId := api.AssigneeID(q["assignee_id"].GetInt64Value())
+		opt.AssigneeID = assigneeId
 	}
 
 	if q["author_id"] != nil {
@@ -95,8 +95,8 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 	}
 
 	if q["reviewer_id"] != nil {
-		reviewerId := int(q["reviewer_id"].GetInt64Value())
-		opt.ReviewerID = &reviewerId
+		reviewerId := api.ReviewerID(q["reviewer_id"].GetInt64Value())
+		opt.ReviewerID = reviewerId
 	}
 
 	for {
@@ -137,8 +137,8 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	}
 
 	if q["assignee_id"] != nil {
-		assigneeId := int(q["assignee_id"].GetInt64Value())
-		opt.AssigneeID = &assigneeId
+		assigneeId := api.AssigneeID(q["assignee_id"].GetInt64Value())
+		opt.AssigneeID = assigneeId
 	}
 
 	if q["author_id"] != nil {
@@ -147,8 +147,8 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	}
 
 	if q["reviewer_id"] != nil {
-		reviewerId := int(q["reviewer_id"].GetInt64Value())
-		opt.ReviewerID = &reviewerId
+		reviewerId := api.ReviewerID(q["reviewer_id"].GetInt64Value())
+		opt.ReviewerID = reviewerId
 	}
 
 	for {
