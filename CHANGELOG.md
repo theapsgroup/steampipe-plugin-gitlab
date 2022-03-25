@@ -1,3 +1,16 @@
+## v0.0.5 [2022-03-25]
+
+_What's new?_
+
+- New tables added
+  - [gitlab_project_repository](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_repository)
+  - [gitlab_project_repository_file](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_repository_file)
+
+_Enhancements_
+
+- Updated: Recompiled with [steampipe-plugin-sdk v1.8.3](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v183--2021-12-23)
+- Updated: Recompiled with [go-gitlab v0.55.0](https://github.com/xanzy/go-gitlab/releases/tag/v0.55.0)
+
 ## v0.0.4 [2021-11-29]
 
 _Enhancements_
