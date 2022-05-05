@@ -2,7 +2,7 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 	api "github.com/xanzy/go-gitlab"
 )
 

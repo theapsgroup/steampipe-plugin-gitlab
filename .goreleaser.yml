@@ -7,19 +7,16 @@ builds:
   - env:
       - CGO_ENABLED=0
       - GO111MODULE=on
-      # - GOPRIVATE=github.com/turbot
+      - GOPRIVATE=github.com/turbot
     goos:
       - linux
       - darwin
-      #- windows #- not yet.....
+
     goarch:
       - amd64
       - arm64
-    ignore:
-      - goos: darwin # docs suggest that darwin arm64 should compile, but doesnt...
-        goarch: arm64
 
-    id: "steampipe-gitlab"
+    id: "steampipe"
     binary: "{{ .ProjectName }}.plugin"
 
 archives:

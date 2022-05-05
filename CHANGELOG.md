@@ -1,3 +1,10 @@
+## v0.1.0 [2022-05-05]
+
+_Enhancements_
+
+- Updated: Recompiled with [golang version 1.18](https://tip.golang.org/doc/go1.18)
+- Updated: Recompiled with [steampipe-plugin-sdk v3.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v310--2022-03-30)
+
 ## v0.0.5 [2022-03-25]
 
 _What's new?_
