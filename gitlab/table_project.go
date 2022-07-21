@@ -160,6 +160,7 @@ func projectColumns() []*plugin.Column {
 		{Name: "visibility", Type: proto.ColumnType_STRING, Description: "The projects visibility level (private/public/internal)"},
 		{Name: "web_url", Type: proto.ColumnType_STRING, Description: "The projects url."},
 		{Name: "tag_list", Type: proto.ColumnType_JSON, Description: "An array of tags associated to the project."},
+		{Name: "topics", Type: proto.ColumnType_JSON, Description: "An array of topics associated to the project."},
 		{Name: "issues_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if project has issues enabled."},
 		{Name: "open_issues_count", Type: proto.ColumnType_INT, Description: "A count of open issues on the project.", Transform: transform.FromGo()},
 		{Name: "merge_requests_enabled", Type: proto.ColumnType_BOOL, Description: "Indicates if merge requests are enabled on the project"},

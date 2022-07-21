@@ -1,3 +1,9 @@
+## v0.1.1 [WIP]
+
+_What's new?_
+
+- New column topics added to gitlab_project & gitlab_my_project tables [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
+
 ## v0.1.0 [2022-05-05]
 
 _Enhancements_
