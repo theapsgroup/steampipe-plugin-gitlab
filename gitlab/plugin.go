@@ -33,6 +33,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_my_project":              tableMyProject(),
 			"gitlab_my_issue":                tableMyIssue(),
 			"gitlab_epic":                    tableEpic(),
+			"gitlab_group_iteration":         tableGroupIteration(),
+			"gitlab_project_iteration":       tableProjectIteration(),
 		},
 	}
 
