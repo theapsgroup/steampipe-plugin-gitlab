@@ -188,5 +188,15 @@ func projectColumns() []*plugin.Column {
 		{Name: "repository_size", Type: proto.ColumnType_INT, Description: "The size of the projects repository on disk.", Transform: transform.FromField("Statistics.StorageStatistics.RepositorySize")},
 		{Name: "lfs_objects_size", Type: proto.ColumnType_INT, Description: "The size of the projects LFS objects on disk.", Transform: transform.FromField("Statistics.StorageStatistics.LfsObjectsSize")},
 		{Name: "job_artifacts_size", Type: proto.ColumnType_INT, Description: "The size of projects job artifacts on disk.", Transform: transform.FromField("Statistics.StorageStatistics.JobArtifactsSize")},
+		{Name: "issues_access_level", Type: proto.ColumnType_STRING, Description: "The access level for issues."},
+		{Name: "repository_access_level", Type: proto.ColumnType_STRING, Description: "The access level for the repository."},
+		{Name: "merge_requests_access_level", Type: proto.ColumnType_STRING, Description: "The access level for merge requests."},
+		{Name: "forking_access_level", Type: proto.ColumnType_STRING, Description: "The access level for forks/forking."},
+		{Name: "wiki_access_level", Type: proto.ColumnType_STRING, Description: "The access level for the wiki."},
+		{Name: "builds_access_level", Type: proto.ColumnType_STRING, Description: "The access level for builds."},
+		{Name: "snippets_access_level", Type: proto.ColumnType_STRING, Description: "The access level for snippets."},
+		{Name: "pages_access_level", Type: proto.ColumnType_STRING, Description: "The access level for pages."},
+		{Name: "operations_access_level", Type: proto.ColumnType_STRING, Description: "The access level for operations."},
+		{Name: "analytics_access_level", Type: proto.ColumnType_STRING, Description: "The access level for analytics."},
 	}
 }

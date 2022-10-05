@@ -2,7 +2,19 @@
 
 _What's new?_
 
-- New column topics added to gitlab_project & gitlab_my_project tables [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
+- New column `topics` added to gitlab_project & gitlab_my_project tables [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
+- New columns added to gitlab_project & gitlab_my_project tables [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `issues_access_level`
+  - `repository_access_level`
+  - `merge_requests_access_level`
+  - `forking_access_level`
+  - `wiki_access_level`
+  - `builds_access_level`
+  - `snippets_access_level`
+  - `pages_access_level`
+  - `operations_access_level`
+  - `analytics_access_level`
+
 
 ## v0.1.0 [2022-05-05]
 
