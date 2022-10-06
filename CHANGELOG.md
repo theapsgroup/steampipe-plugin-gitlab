@@ -2,18 +2,22 @@
 
 _What's new?_
 
-- New column `topics` added to gitlab_project & gitlab_my_project tables [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
-- New columns added to gitlab_project & gitlab_my_project tables [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
-  - `issues_access_level`
-  - `repository_access_level`
-  - `merge_requests_access_level`
-  - `forking_access_level`
-  - `wiki_access_level`
-  - `builds_access_level`
-  - `snippets_access_level`
-  - `pages_access_level`
-  - `operations_access_level`
-  - `analytics_access_level`
+- New tables added
+  - [gitlab_epics](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_epics) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+  - [gitlab_group_iteration](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_group_iteration) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+  - [gitlab_project_iteration](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_iteration) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+- New columns added to [gitlab_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project) & [gitlab_my_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_my_project) tables 
+  - `issues_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `repository_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `merge_requests_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `forking_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `wiki_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `builds_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `snippets_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `pages_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `operations_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `analytics_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `topics` [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
 
 
 ## v0.1.0 [2022-05-05]
