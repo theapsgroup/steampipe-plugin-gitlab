@@ -1,5 +1,10 @@
 ## v0.1.1 [WIP]
 
+_Enhancements_
+
+- Updated: Recompiled with [golang version 1.19](https://tip.golang.org/doc/go1.19)
+- Updated: Recompiled with [steampipe-plugin-sdk v4.1.7](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v417-2022-09-08)
+
 _What's new?_
 
 - New tables added

@@ -2,8 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -50,6 +51,12 @@ func tableProjectProtectedBranch() *plugin.Table {
 				Name:        "unprotect_access_levels",
 				Type:        proto.ColumnType_JSON,
 				Description: "Array of unprotected access levels.",
+			},
+			{
+				Name:        "project_id",
+				Type:        proto.ColumnType_INT,
+				Description: "The ID of the project the protected branch belongs to - link `gitlab_project.id`.",
+				Transform:   transform.FromQual("project_id"),
 			},
 		},
 	}
