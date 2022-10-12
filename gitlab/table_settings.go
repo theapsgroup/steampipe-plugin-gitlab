@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
 func tableSetting() *plugin.Table {
@@ -463,9 +463,10 @@ func settingsColumns() []*plugin.Column {
 			Description: "Indicates if Plant UML integration is enabled.",
 		},
 		{
-			Name:        "plantuml_enabled",
+			Name:        "plantuml_url",
 			Type:        proto.ColumnType_STRING,
 			Description: "The PlantUML instance URL for integration.",
+			Transform:   transform.FromField("PlantumlURL"),
 		},
 		{
 			Name:        "polling_interval_multiplier",
