@@ -39,6 +39,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_group_hook":               tableGroupHook(),
 			"gitlab_project_protected_branch": tableProjectProtectedBranch(),
 			"gitlab_project_pages_domain":     tableProjectPagesDomain(),
+			"gitlab_setting":                  tableSetting(),
 		},
 	}
 

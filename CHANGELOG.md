@@ -10,6 +10,7 @@ _What's new?_
   - [gitlab_hook](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_hook) *Premium License Required* [#21](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/21)
   - [gitlab_project_protected_branch](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_protected_branch) [#18](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/18)
   - [gitlab_project_pages_domain](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_pages_domain) [#23](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/23)
+  - [gitlab_setting](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_setting) [#17](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/17)
 - New columns added to [gitlab_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project) & [gitlab_my_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_my_project) tables 
   - `issues_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
   - `repository_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
