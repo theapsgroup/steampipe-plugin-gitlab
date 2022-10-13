@@ -37,7 +37,7 @@ steampipe plugin install theapsgroup/gitlab
 
 The preferred option is to use Environment Variables for configuration.
 
-However, you can configure in the `~./steampipe/config/gitlab.spc` (this will take precedence).
+However, you can configure in the `~/.steampipe/config/gitlab.spc` (this will take precedence).
 
 Environment Variables:
 - `GITLAB_ADDR` for the base url for the API endpoint (ex: `https://gitlab.mycompany.com/api/v4`)

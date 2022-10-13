@@ -1,8 +1,34 @@
-## v0.1.1 [WIP]
+## v0.1.1 [2022-10-12]
+
+_Enhancements_
+
+- Updated: Recompiled with [golang version 1.19](https://tip.golang.org/doc/go1.19)
+- Updated: Recompiled with [steampipe-plugin-sdk v4.1.7](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v417-2022-09-08)
 
 _What's new?_
 
-- New column topics added to gitlab_project & gitlab_my_project tables [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
+- New tables added
+  - [gitlab_epic](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_epic) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+  - [gitlab_group_iteration](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_group_iteration) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+  - [gitlab_project_iteration](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_iteration) *Premium License Required* [#13](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/13)
+  - [gitlab_group_push_rule](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_group_push_rule) *Premium License Required* [#19](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/19)
+  - [gitlab_hook](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_hook) *Premium License Required* [#21](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/21)
+  - [gitlab_project_protected_branch](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_protected_branch) [#18](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/18)
+  - [gitlab_project_pages_domain](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_pages_domain) [#23](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/23)
+  - [gitlab_setting](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_setting) [#17](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/17)
+- New columns added to [gitlab_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project) & [gitlab_my_project](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_my_project) tables 
+  - `issues_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `repository_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `merge_requests_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `forking_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `wiki_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `builds_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `snippets_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `pages_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `operations_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `analytics_access_level` [#20](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/20)
+  - `topics` [#14](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/14)
+
 
 ## v0.1.0 [2022-05-05]
 
