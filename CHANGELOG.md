@@ -1,3 +1,9 @@
+## v0.1.2 [2022-10-13]
+
+_What's new?_
+
+- New table [gitlab_project_job](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_job) - Thanks [@hiepph](https://github.com/hiepph)
+
 ## v0.1.1 [2022-10-12]
 
 _Enhancements_
