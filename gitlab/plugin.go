@@ -29,6 +29,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_snippet":                  tableSnippet(),
 			"gitlab_project_pipeline":         tableProjectPipeline(),
 			"gitlab_project_pipeline_detail":  tableProjectPipelineDetail(),
+			"gitlab_project_job":              tableProjectJob(),
 			"gitlab_project_repository":       tableProjectRepository(),
 			"gitlab_project_repository_file":  tableProjectRepositoryFile(),
 			"gitlab_my_project":               tableMyProject(),
