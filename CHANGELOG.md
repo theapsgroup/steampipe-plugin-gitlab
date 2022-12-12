@@ -1,3 +1,9 @@
+## v0.1.3 [WIP]
+
+_What's new?_
+
+- Extended the `gitlab_project` & `gitlab_my_project` tables with namespace fields.
+
 ## v0.1.2 [2022-10-13]
 
 _What's new?_
