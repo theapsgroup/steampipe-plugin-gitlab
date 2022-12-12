@@ -2,7 +2,12 @@
 
 _What's new?_
 
-- Extended the `gitlab_project` & `gitlab_my_project` tables with namespace fields.
+- Extended the `gitlab_project` & `gitlab_my_project` tables with namespace fields as below:
+  - `namespace_id` [#32](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/32)
+  - `namespace_name` [#32](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/32)
+  - `namespace_kind` [#32](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/32)
+  - `namespace_path` [#32](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/32)
+  - `namespace_full_path` [#32](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/32)
 
 ## v0.1.2 [2022-10-13]
 
