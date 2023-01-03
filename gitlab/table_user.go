@@ -3,9 +3,9 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 	"strings"
 )
@@ -62,8 +62,8 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 }
 
 func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	userId := int(d.KeyColumnQuals["id"].GetInt64Value())
-	userName := d.KeyColumnQuals["username"].GetStringValue()
+	userId := int(d.EqualsQuals["id"].GetInt64Value())
+	userName := d.EqualsQuals["username"].GetStringValue()
 
 	conn, err := connect(ctx, d)
 	if err != nil {

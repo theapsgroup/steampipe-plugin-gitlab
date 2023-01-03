@@ -2,8 +2,8 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -90,7 +90,7 @@ func iterationColumns() []*plugin.Column {
 }
 
 func listGroupIterations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 
 	groupId := int(q["group_id"].GetInt64Value())
 

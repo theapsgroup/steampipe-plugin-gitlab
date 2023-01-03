@@ -2,7 +2,7 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -64,7 +64,7 @@ func getMyProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	if err != nil {
 		return nil, err
 	}
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	id := int(q["id"].GetInt64Value())
 	stats := true
 

@@ -3,9 +3,9 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -32,7 +32,7 @@ func tableProject() *plugin.Table {
 
 // Hydrate Functions
 func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 
 	if q["owner_id"] == nil &&
 		q["owner_username"] == nil &&
@@ -54,7 +54,7 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	stats := true
 
 	opt := &api.ListProjectsOptions{ListOptions: api.ListOptions{
@@ -131,7 +131,7 @@ func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	id := int(q["id"].GetInt64Value())
 	stats := true
 

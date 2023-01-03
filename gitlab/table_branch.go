@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 	"strings"
 	"time"
@@ -59,7 +59,7 @@ func tableBranch() *plugin.Table {
 }
 
 func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 
 	conn, err := connect(ctx, d)
 	if err != nil {
@@ -111,8 +111,8 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 }
 
 func getBranch(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
-	name := d.KeyColumnQuals["name"].GetStringValue()
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	name := d.EqualsQuals["name"].GetStringValue()
 
 	conn, err := connect(ctx, d)
 	if err != nil {

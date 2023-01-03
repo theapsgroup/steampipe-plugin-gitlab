@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 	"strings"
 )
@@ -41,7 +41,7 @@ func tableCommit() *plugin.Table {
 }
 
 func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 	getAll := true
 
 	conn, err := connect(ctx, d)
@@ -80,8 +80,8 @@ func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 }
 
 func getCommit(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	id := d.EqualsQuals["id"].GetStringValue()
 
 	conn, err := connect(ctx, d)
 	if err != nil {
