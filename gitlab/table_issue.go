@@ -134,7 +134,7 @@ func addOptionalProjectIssueQualifiers(opts *api.ListProjectIssuesOptions, q map
 
 	if q["assignee_id"] != nil {
 		assigneeId := int(q["assignee_id"].GetInt64Value())
-		opts.AssigneeID = &assigneeId
+		opts.AssigneeID = api.AssigneeID(assigneeId)
 	}
 
 	if q["author_id"] != nil {
@@ -158,7 +158,7 @@ func addOptionalIssueQualifiers(opts *api.ListIssuesOptions, q map[string]*proto
 
 	if q["assignee_id"] != nil {
 		assigneeId := int(q["assignee_id"].GetInt64Value())
-		opts.AssigneeID = &assigneeId
+		opts.AssigneeID = api.AssigneeID(assigneeId)
 	}
 
 	if q["author_id"] != nil {
