@@ -1,5 +1,22 @@
 ## v0.2.0 [WIP]
 
+_What's new?_
+
+- Extended the `gitlab_branch` table with following columns:
+  - `commit_message`
+- Extended the `gitlab_commit` table with following columns:
+  - `commit_additions`
+  - `commit_deletions`
+  - `commit_total_changes`
+  - `pipeline_id`
+  - `pipeline_status`
+  - `pipeline_source`
+  - `pipeline_ref`
+  - `pipeline_sha`
+  - `pipeline_url`
+  - `pipeline_created`
+  - `pipeline_updated`
+
 _Enhancements_
 
 - Updated: Recompiled with [steampipe-plugin-sdk v5.0.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v500-2022-11-16)
