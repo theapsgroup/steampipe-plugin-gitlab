@@ -3,7 +3,7 @@
 _Enhancements_
 
 - Updated: Recompiled with [steampipe-plugin-sdk v5.0.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v500-2022-11-16)
-- 
+- Updated: Recompiled with [xanzy/go-gitlab v0.77.0](https://github.com/xanzy/go-gitlab/releases/tag/v0.77.0)
 
 ## v0.1.3 [2022-12-12]
 

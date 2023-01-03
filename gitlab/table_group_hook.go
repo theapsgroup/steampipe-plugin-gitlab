@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/xanzy/go-gitlab"
 )
 
 func tableGroupHook() *plugin.Table {
@@ -111,14 +112,26 @@ func listGroupHooks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	}
 
 	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
-
-	hooks, _, err := conn.Groups.ListGroupHooks(groupId)
-	if err != nil {
-		return nil, err
+	opts := gitlab.ListGroupHooksOptions{
+		Page:    1,
+		PerPage: 30,
 	}
 
-	for _, hook := range hooks {
-		d.StreamListItem(ctx, hook)
+	for {
+		hooks, resp, err := conn.Groups.ListGroupHooks(groupId, &opts)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, hook := range hooks {
+			d.StreamListItem(ctx, hook)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		opts.Page = resp.NextPage
 	}
 
 	return nil, nil
