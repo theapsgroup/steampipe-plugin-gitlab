@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 	"strings"
 )
@@ -87,7 +87,7 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 }
 
 func getGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	groupId := int(d.KeyColumnQuals["id"].GetInt64Value())
+	groupId := int(d.EqualsQuals["id"].GetInt64Value())
 	opts := &api.GetGroupOptions{}
 
 	conn, err := connect(ctx, d)

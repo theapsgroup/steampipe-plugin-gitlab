@@ -3,9 +3,9 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -37,7 +37,7 @@ func getMergeRequest(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	iid := int(q["iid"].GetInt64Value())
 	projectId := int(q["project_id"].GetInt64Value())
 
@@ -50,7 +50,7 @@ func getMergeRequest(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 }
 
 func listMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 
 	if q["project_id"] == nil &&
 		q["assignee_id"] == nil &&
@@ -73,7 +73,7 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 	if err != nil {
 		return nil, err
 	}
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 
 	projectId := int(q["project_id"].GetInt64Value())
 
@@ -125,7 +125,7 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	defaultScope := "all"
 
 	opt := &api.ListMergeRequestsOptions{

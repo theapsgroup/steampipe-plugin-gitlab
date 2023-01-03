@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strings"
 	"time"
 )
@@ -67,8 +67,8 @@ func listProjectPipelineDetails(ctx context.Context, d *plugin.QueryData, h *plu
 		return nil, err
 	}
 
-	projectId := int(d.KeyColumnQuals["project_id"].GetInt64Value())
-	pipelineId := int(d.KeyColumnQuals["id"].GetInt64Value())
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	pipelineId := int(d.EqualsQuals["id"].GetInt64Value())
 
 	pipeline, _, err := conn.Pipelines.GetPipeline(projectId, pipelineId)
 	if err != nil {

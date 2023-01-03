@@ -2,8 +2,8 @@ package gitlab
 
 import (
 	"context"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
 func tableGroupHook() *plugin.Table {
@@ -110,7 +110,7 @@ func listGroupHooks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		return nil, err
 	}
 
-	groupId := int(d.KeyColumnQuals["group_id"].GetInt64Value())
+	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
 
 	hooks, _, err := conn.Groups.ListGroupHooks(groupId)
 	if err != nil {

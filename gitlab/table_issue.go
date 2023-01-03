@@ -3,9 +3,9 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -29,7 +29,7 @@ func tableIssue() *plugin.Table {
 
 // Hydrate Functions
 func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 
 	if q["assignee"] == nil &&
 		q["assignee_id"] == nil &&
@@ -52,7 +52,7 @@ func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	if q["project_id"] == nil {
 		return nil, nil
 	}
@@ -95,7 +95,7 @@ func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	q := d.KeyColumnQuals
+	q := d.EqualsQuals
 	defaultScope := "all"
 	opt := &api.ListIssuesOptions{
 		Scope: &defaultScope,
