@@ -18,6 +18,7 @@ type ProjectPipeline struct {
 	CreatedAt *time.Time
 	WebURL    string
 	ProjectID int
+	Source    string
 }
 
 func tableProjectPipeline() *plugin.Table {
@@ -37,6 +38,7 @@ func tableProjectPipeline() *plugin.Table {
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of when the pipeline was created."},
 			{Name: "updated_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of when the pipeline was last updated."},
 			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project the pipeline was run against - link `gitlab_project.id`."},
+			{Name: "source", Type: proto.ColumnType_STRING, Description: "The source associated with the pipeline."},
 		},
 	}
 }
@@ -70,6 +72,7 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 				CreatedAt: pipeline.CreatedAt,
 				UpdatedAt: pipeline.UpdatedAt,
 				ProjectID: projectId,
+				Source:    pipeline.Source,
 			})
 		}
 

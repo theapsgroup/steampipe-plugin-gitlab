@@ -22,10 +22,12 @@ func tableSnippet() *plugin.Table {
 			{Name: "description", Type: proto.ColumnType_STRING, Description: "The description of the snippet."},
 			{Name: "author_id", Type: proto.ColumnType_INT, Description: "The ID of the author - link to `gitlab_user.id`", Transform: transform.FromField("Author.ID")},
 			{Name: "author_username", Type: proto.ColumnType_STRING, Description: "The username of the author -  - link to `gitlab_user.username`", Transform: transform.FromField("Author.Username")},
+			{Name: "author_name", Type: proto.ColumnType_STRING, Description: "The display name of the author.", Transform: transform.FromField("Author.Name")},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of the creation of the snippet."},
 			{Name: "updated_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp that the snippet was last updated."},
 			{Name: "web_url", Type: proto.ColumnType_STRING, Description: "The url to the snippet.", Transform: transform.FromField("WebURL")},
 			{Name: "raw_url", Type: proto.ColumnType_STRING, Description: "The url to the raw content of the snippet.", Transform: transform.FromField("RawURL")},
+			{Name: "files", Type: proto.ColumnType_JSON, Description: "An array of file paths & urls."},
 		},
 	}
 }

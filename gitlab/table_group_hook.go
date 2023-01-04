@@ -52,6 +52,11 @@ func tableGroupHook() *plugin.Table {
 				Description: "Indicates if confidential issue events will be sent to the hook.",
 			},
 			{
+				Name:        "confidential_note_events",
+				Type:        proto.ColumnType_BOOL,
+				Description: "Indicates if confidential note events will be sent to the hook.",
+			},
+			{
 				Name:        "merge_requests_events",
 				Type:        proto.ColumnType_BOOL,
 				Description: "Indicates if merge request events will be sent to the hook.",
@@ -100,6 +105,11 @@ func tableGroupHook() *plugin.Table {
 				Name:        "group_id",
 				Type:        proto.ColumnType_INT,
 				Description: "The group id - link to gitlab_group.id`.",
+			},
+			{
+				Name:        "enable_ssl_verification",
+				Type:        proto.ColumnType_BOOL,
+				Description: "Indicates if SSL verification is enabled for the hook.",
 			},
 		},
 	}

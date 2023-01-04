@@ -25,6 +25,7 @@ type Branch struct {
 	CommitTitle        string
 	CommitEmail        string
 	CommitDate         *time.Time
+	CommitMessage      string
 }
 
 func tableBranch() *plugin.Table {
@@ -39,22 +40,7 @@ func tableBranch() *plugin.Table {
 			KeyColumns: plugin.AllColumns([]string{"project_id", "name"}),
 			Hydrate:    getBranch,
 		},
-		Columns: []*plugin.Column{
-			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project containing the branches - link to `gitlab_project.ID`"},
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the branch."},
-			{Name: "protected", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch is protected or not."},
-			{Name: "merged", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch has been merged into the trunk."},
-			{Name: "default", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch is the default branch of the project."},
-			{Name: "can_push", Type: proto.ColumnType_BOOL, Description: "Indicates if the current user can push to this branch."},
-			{Name: "devs_can_push", Type: proto.ColumnType_BOOL, Description: "Indicates if users with the `developer` level of access can push to the branch.", Transform: transform.FromField("DevelopersCanPush")},
-			{Name: "devs_can_merge", Type: proto.ColumnType_BOOL, Description: "Indicates if users with the `developer` level of access can merge the branch.", Transform: transform.FromField("DevelopersCanMerge")},
-			{Name: "web_url", Type: proto.ColumnType_STRING, Description: "The url of the branch.", Transform: transform.FromField("WebUrl").NullIfZero()},
-			{Name: "commit_id", Type: proto.ColumnType_STRING, Description: "The latest commit hash on the branch."},
-			{Name: "commit_short_id", Type: proto.ColumnType_STRING, Description: "The latest short commit hash on the branch."},
-			{Name: "commit_title", Type: proto.ColumnType_STRING, Description: "The title of the latest commit on the branch."},
-			{Name: "commit_email", Type: proto.ColumnType_STRING, Description: "The email address associated with the latest commit on the branch."},
-			{Name: "commit_date", Type: proto.ColumnType_TIMESTAMP, Description: "The date of the latest commit on the branch."},
-		},
+		Columns: branchColumns(),
 	}
 }
 
@@ -97,6 +83,7 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 				CommitTitle:        branch.Commit.Title,
 				CommitEmail:        branch.Commit.CommitterEmail,
 				CommitDate:         branch.Commit.CommittedDate,
+				CommitMessage:      branch.Commit.Message,
 			})
 		}
 
@@ -142,5 +129,25 @@ func getBranch(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		CommitTitle:        branch.Commit.Title,
 		CommitEmail:        branch.Commit.CommitterEmail,
 		CommitDate:         branch.Commit.CommittedDate,
+		CommitMessage:      branch.Commit.Message,
 	}, nil
+}
+
+func branchColumns() []*plugin.Column {
+	return []*plugin.Column{
+		{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project containing the branches - link to `gitlab_project.ID`"},
+		{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the branch."},
+		{Name: "protected", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch is protected or not."},
+		{Name: "merged", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch has been merged into the trunk."},
+		{Name: "default", Type: proto.ColumnType_BOOL, Description: "Indicates if the branch is the default branch of the project."},
+		{Name: "can_push", Type: proto.ColumnType_BOOL, Description: "Indicates if the current user can push to this branch."},
+		{Name: "devs_can_push", Type: proto.ColumnType_BOOL, Description: "Indicates if users with the `developer` level of access can push to the branch.", Transform: transform.FromField("DevelopersCanPush")},
+		{Name: "devs_can_merge", Type: proto.ColumnType_BOOL, Description: "Indicates if users with the `developer` level of access can merge the branch.", Transform: transform.FromField("DevelopersCanMerge")},
+		{Name: "web_url", Type: proto.ColumnType_STRING, Description: "The url of the branch.", Transform: transform.FromField("WebUrl").NullIfZero()},
+		{Name: "commit_id", Type: proto.ColumnType_STRING, Description: "The latest commit hash on the branch."},
+		{Name: "commit_short_id", Type: proto.ColumnType_STRING, Description: "The latest short commit hash on the branch."},
+		{Name: "commit_title", Type: proto.ColumnType_STRING, Description: "The title of the latest commit on the branch."},
+		{Name: "commit_email", Type: proto.ColumnType_STRING, Description: "The email address associated with the latest commit on the branch."},
+		{Name: "commit_date", Type: proto.ColumnType_TIMESTAMP, Description: "The date of the latest commit on the branch."},
+	}
 }

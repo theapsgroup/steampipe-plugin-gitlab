@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableGroupPushRule() *plugin.Table {
@@ -84,6 +85,7 @@ func tableGroupPushRule() *plugin.Table {
 				Name:        "group_id",
 				Type:        proto.ColumnType_INT,
 				Description: "The group id - link to gitlab_group.id`.",
+				Transform:   transform.FromQual("group_id"),
 			},
 		},
 	}

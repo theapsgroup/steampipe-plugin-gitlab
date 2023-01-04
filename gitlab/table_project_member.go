@@ -42,6 +42,7 @@ func tableProjectMember() *plugin.Table {
 			{Name: "access_level", Type: proto.ColumnType_INT, Description: "The access level the project member holds within the project.", Transform: transform.FromGo()},
 			{Name: "access_desc", Type: proto.ColumnType_STRING, Description: "The descriptive of the access level held by the project member."},
 			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The project id - link to gitlab_project.id`."},
+			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp at which the user was created."},
 		},
 	}
 }
@@ -77,6 +78,7 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 				AccessLevel: int(member.AccessLevel),
 				AccessDesc:  parseAccessLevel(int(member.AccessLevel)),
 				ProjectID:   projectId,
+				CreatedAt:   member.CreatedAt,
 			})
 		}
 

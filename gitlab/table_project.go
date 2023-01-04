@@ -202,6 +202,24 @@ func projectColumns() []*plugin.Column {
 			Description: "The projects url.",
 		},
 		{
+			Name:        "ssh_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The ssh url for the project repository.",
+			Transform:   transform.FromField("SSHURLToRepo"),
+		},
+		{
+			Name:        "http_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The http url to the project repository.",
+			Transform:   transform.FromField("HTTPURLToRepo"),
+		},
+		{
+			Name:        "readme_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The url for the projects readme file",
+			Transform:   transform.FromField("ReadmeURL"),
+		},
+		{
 			Name:        "tag_list",
 			Type:        proto.ColumnType_JSON,
 			Description: "An array of tags associated to the project.",
@@ -252,6 +270,21 @@ func projectColumns() []*plugin.Column {
 			Name:        "container_registry_enabled",
 			Type:        proto.ColumnType_BOOL,
 			Description: "Indicates if the project has the container registry enabled.",
+		},
+		{
+			Name:        "container_registry_image_prefix",
+			Type:        proto.ColumnType_STRING,
+			Description: "The image prefix for the container registry.",
+		},
+		{
+			Name:        "container_registry_access_level",
+			Type:        proto.ColumnType_STRING,
+			Description: "Access level of current user for the container registry.",
+		},
+		{
+			Name:        "container_expiration_policy",
+			Type:        proto.ColumnType_JSON,
+			Description: "JSON Object outlining the expiration policy attached to the container registry.",
 		},
 		{
 			Name:        "creator_id",
@@ -327,6 +360,12 @@ func projectColumns() []*plugin.Column {
 			Type:        proto.ColumnType_STRING,
 			Description: "The projects owner username. (null if owned by a group) - link to `gitlab_user.username`",
 			Transform:   transform.FromField("Owner.Username"),
+		},
+		{
+			Name:        "owner_name",
+			Type:        proto.ColumnType_STRING,
+			Description: "The display name for the projects owner.",
+			Transform:   transform.FromField("Owner.Name"),
 		},
 		{
 			Name:        "commit_count",
@@ -437,6 +476,151 @@ func projectColumns() []*plugin.Column {
 			Type:        proto.ColumnType_STRING,
 			Description: "The kind of the namespace to which the project belongs.",
 			Transform:   transform.FromField("Namespace.Kind"),
+		},
+		{
+			Name:        "resolve_outdated_diff_discussions",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if outdated diff discussions should be resolved.",
+		},
+		{
+			Name:        "import_status",
+			Type:        proto.ColumnType_STRING,
+			Description: "Status of project import.",
+		},
+		{
+			Name:        "import_error",
+			Type:        proto.ColumnType_STRING,
+			Description: "Error of importing project (if any).",
+		},
+		{
+			Name:        "license_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The url for the license of the project.",
+			Transform:   transform.FromField("LicenseURL"),
+		},
+		{
+			Name:        "license",
+			Type:        proto.ColumnType_STRING,
+			Description: "The projects license type.",
+			Transform:   transform.FromField("License.Name"),
+		},
+		{
+			Name:        "shared_runners_enabled",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the project has shared runners enabled.",
+		},
+		{
+			Name:        "runners_token",
+			Type:        proto.ColumnType_STRING,
+			Description: "The token used for runners by the project.",
+		},
+		{
+			Name:        "public_jobs",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the project has/allows public jobs.",
+		},
+		{
+			Name:        "allow_merge_on_skipped_pipeline",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if merges are allowed if the pipeline is skipped.",
+		},
+		{
+			Name:        "only_allow_merge_if_pipeline_succeeds",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if merges are only allowed when the pipeline succeeds.",
+		},
+		{
+			Name:        "only_allow_merge_if_all_discussions_are_resolved",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if merges are only allowed when all discussions are resolved.",
+		},
+		{
+			Name:        "remove_source_branch_after_merge",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if source branches are removed after merge by default on the project.",
+		},
+		{
+			Name:        "repository_storage",
+			Type:        proto.ColumnType_STRING,
+			Description: "The type of storage used by the repository.",
+		},
+		{
+			Name:        "merge_method",
+			Type:        proto.ColumnType_STRING,
+			Description: "The projects default merge method (merge, squash, rebase, etc).",
+		},
+		{
+			Name:        "fork_parent_id",
+			Type:        proto.ColumnType_INT,
+			Description: "ID of the fork parent.",
+			Transform:   transform.FromField("ForkedFromProject.ID"),
+		},
+		{
+			Name:        "fork_parent_name",
+			Type:        proto.ColumnType_STRING,
+			Description: "Full name of the fork parent.",
+			Transform:   transform.FromField("ForkedFromProject.NameWithNamespace"),
+		},
+		{
+			Name:        "fork_parent_path",
+			Type:        proto.ColumnType_STRING,
+			Description: "Full path of the fork parent.",
+			Transform:   transform.FromField("ForkedFromProject.PathWithNamespace"),
+		},
+		{
+			Name:        "fork_parent_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The url of the fork parent.",
+			Transform:   transform.FromField("ForkedFromProject.WebURL"),
+		},
+		{
+			Name:        "mirror",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the project is a mirror",
+		},
+		{
+			Name:        "mirror_user_id",
+			Type:        proto.ColumnType_INT,
+			Description: "ID of the user whom configured the mirror",
+		},
+		{
+			Name:        "mirror_trigger_builds",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the mirror can trigger builds.",
+		},
+		{
+			Name:        "only_mirror_protected_branches",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if only protected branches are mirrored.",
+		},
+		{
+			Name:        "mirror_overwrites_diverged_branches",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the mirror can overwrite diverged branches.",
+		},
+		{
+			Name:        "autoclose_referenced_issues",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if referenced issues will be automatically closed by merges in the project.",
+			Transform:   transform.FromField("AutocloseReferencedIssues"),
+		},
+		{
+			Name:        "ci_forward_deployment_enabled",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if ci forward deployments are enabled.",
+			Transform:   transform.FromField("CIForwardDeploymentEnabled"),
+		},
+		{
+			Name:        "ci_config_path",
+			Type:        proto.ColumnType_STRING,
+			Description: "The path of the CI configuration.",
+			Transform:   transform.FromField("CIConfigPath"),
+		},
+		{
+			Name:        "ci_separated_caches",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the CI uses separate caches.",
+			Transform:   transform.FromField("CISeperateCache"),
 		},
 	}
 }

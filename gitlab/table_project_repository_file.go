@@ -80,6 +80,12 @@ func repoFileColumns() []*plugin.Column {
 			Name:        "content_sha256",
 			Type:        proto.ColumnType_STRING,
 			Description: "The SHA256 hash of the file content",
+			Transform:   transform.FromField("SHA256"),
+		},
+		{
+			Name:        "execute_filemode",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if the file has execution permissions.",
 		},
 		{
 			Name:        "project_id",

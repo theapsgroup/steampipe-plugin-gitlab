@@ -138,5 +138,7 @@ func userColumns() []*plugin.Column {
 		{Name: "extra_shared_runners_minutes_limit", Type: proto.ColumnType_INT, Description: "Limit in minutes of extra time the user can utilise shared runner resources."},
 		{Name: "using_license_seat", Type: proto.ColumnType_BOOL, Description: "Is the user utilising a seat/slot on the license."},
 		{Name: "custom_attributes", Type: proto.ColumnType_JSON, Description: "JSON Array of custom attributes held against the user."},
+		{Name: "bot", Type: proto.ColumnType_BOOL, Description: "Indicates if user account is a bot."},
+		{Name: "job_title", Type: proto.ColumnType_STRING, Description: "The users job title."},
 	}
 }
