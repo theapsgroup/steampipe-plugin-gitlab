@@ -2,9 +2,9 @@
 
 _What's new?_
 
-- Extended the `gitlab_branch` table with following columns:
+- Extended the `gitlab_branch` table with the following columns:
   - `commit_message`
-- Extended the `gitlab_commit` table with following columns:
+- Extended the `gitlab_commit` table with the following columns:
   - `commit_additions`
   - `commit_deletions`
   - `commit_total_changes`
@@ -16,6 +16,57 @@ _What's new?_
   - `pipeline_url`
   - `pipeline_created`
   - `pipeline_updated`
+- Extended the `gitlab_epic` table with the following columns:
+  - `parent_id` 
+  - `user_notes_count`
+  - `author_name`
+  - `author_url`
+- Removed the following columns from `gitlab_epic` table as no longer in the SDK:
+  - `reference`
+- Extended the `gitlab_group` table with the following columns:
+  - `default_branch_protection` 
+  - `file_template_project_id`
+  - `shared_runners_enabled`
+  - `prevent_forking_outside_group`
+  - `commit_count`
+  - `storage_size`
+  - `repository_size`
+  - `wiki_size`
+  - `lfs_objects_size`
+  - `job_artifacts_size`
+  - `pipeline_artifacts_size`
+  - `packages_size`
+  - `snippets_size`
+  - `uploads_size`
+- Extended the `gitlab_group_hook` table with the following columns:
+  - `confidential_note_events`
+  - `enable_ssl_verification` 
+- Extended the `gitlab_issue` & `gitlab_my_issue` tables with the following columns:
+  - `iid`
+  - `author_name`
+  - `weight`
+  - `issue_type`
+  - `subscribed`
+  - `user_notes_count`
+  - `merge_requests_count`
+  - `milestone_id`
+  - `milestone_iid`
+  - `milestone_title`
+  - `milestone_description`
+  - `milestone_created_at`
+  - `milestone_updated_at`
+  - `milestone_start_date`
+  - `milestone_due_date`
+  - `milestone_state`
+  - `milestone_expired`
+  - `labels`
+  - `short_ref`
+  - `rel_ref`
+  - `full_ref`
+  - `time_estimate`
+  - `total_time_spent`
+  - `issue_link_id`
+  - `epic_issue_id`
 
 _Enhancements_
 

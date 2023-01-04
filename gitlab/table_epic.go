@@ -53,6 +53,11 @@ func epicColumns() []*plugin.Column {
 			Type:        proto.ColumnType_INT,
 		},
 		{
+			Name:        "parent_id",
+			Description: "The ID of the parent for the epic.",
+			Type:        proto.ColumnType_INT,
+		},
+		{
 			Name:        "title",
 			Description: "The epics title.",
 			Type:        proto.ColumnType_STRING,
@@ -73,11 +78,6 @@ func epicColumns() []*plugin.Column {
 			Type:        proto.ColumnType_STRING,
 		},
 		{
-			Name:        "reference",
-			Description: "The epics reference identifier.",
-			Type:        proto.ColumnType_STRING,
-		},
-		{
 			Name:        "author_id",
 			Description: "The ID of the author of the epic.",
 			Type:        proto.ColumnType_INT,
@@ -88,6 +88,18 @@ func epicColumns() []*plugin.Column {
 			Description: "The username of the author of the epic.",
 			Type:        proto.ColumnType_STRING,
 			Transform:   transform.FromField("Author.Username"),
+		},
+		{
+			Name:        "author_name",
+			Description: "The display name of the author of the epic.",
+			Type:        proto.ColumnType_STRING,
+			Transform:   transform.FromField("Author.Name"),
+		},
+		{
+			Name:        "author_url",
+			Description: "The url for the authors profile.",
+			Type:        proto.ColumnType_STRING,
+			Transform:   transform.FromField("Author.WebURL"),
 		},
 		{
 			Name:        "start_date",
@@ -132,6 +144,11 @@ func epicColumns() []*plugin.Column {
 		{
 			Name:        "downvotes",
 			Description: "The number of down votes for the epic.",
+			Type:        proto.ColumnType_INT,
+		},
+		{
+			Name:        "user_notes_count",
+			Description: "A count of user notes on the epic.",
 			Type:        proto.ColumnType_INT,
 		},
 	}
