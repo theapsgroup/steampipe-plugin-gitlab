@@ -10,24 +10,27 @@ import (
 )
 
 type ProjectPipelineDetails struct {
-	ID          int
-	Status      string
-	Ref         string
-	SHA         string
-	BeforeSHA   string
-	Tag         bool
-	YamlErrors  string
-	UserID      int
-	Username    string
-	UpdatedAt   *time.Time
-	CreatedAt   *time.Time
-	StartedAt   *time.Time
-	FinishedAt  *time.Time
-	CommittedAt *time.Time
-	Duration    int
-	Coverage    string
-	WebURL      string
-	ProjectID   int
+	ID             int
+	IID            int
+	Status         string
+	Source         string
+	Ref            string
+	SHA            string
+	BeforeSHA      string
+	Tag            bool
+	YamlErrors     string
+	UserID         int
+	Username       string
+	UpdatedAt      *time.Time
+	CreatedAt      *time.Time
+	StartedAt      *time.Time
+	FinishedAt     *time.Time
+	CommittedAt    *time.Time
+	Duration       int
+	QueuedDuration int
+	Coverage       string
+	WebURL         string
+	ProjectID      int
 }
 
 func tableProjectPipelineDetail() *plugin.Table {
@@ -40,11 +43,13 @@ func tableProjectPipelineDetail() *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The ID of the pipeline."},
+			{Name: "iid", Type: proto.ColumnType_INT, Description: "The internal ID of the pipeline.", Transform: transform.FromField("IID")},
 			{Name: "status", Type: proto.ColumnType_STRING, Description: "The status of the pipeline (success/failed/canceled)."},
+			{Name: "source", Type: proto.ColumnType_STRING, Description: "The source of the pipeline."},
 			{Name: "ref", Type: proto.ColumnType_STRING, Description: "The reference associated with the pipeline (branch name or tag)."},
 			{Name: "sha", Type: proto.ColumnType_STRING, Description: "The commit SHA at which the pipeline was run against.", Transform: transform.FromField("SHA")},
 			{Name: "before_sha", Type: proto.ColumnType_STRING, Description: "", Transform: transform.FromField("BeforeSHA")},
-			{Name: "tag", Type: proto.ColumnType_BOOL, Description: ""},
+			{Name: "tag", Type: proto.ColumnType_BOOL, Description: "Indicates if the pipeline was triggered by a tag."},
 			{Name: "yaml_errors", Type: proto.ColumnType_STRING, Description: ""},
 			{Name: "user_id", Type: proto.ColumnType_INT, Description: "The ID of the user which triggered the pipeline - link to `gitlab_user.ID`.", Transform: transform.FromField("UserID")},
 			{Name: "username", Type: proto.ColumnType_STRING, Description: "The username of the user which triggered the pipeline - link to `gitlab_user.username`."},
@@ -53,8 +58,9 @@ func tableProjectPipelineDetail() *plugin.Table {
 			{Name: "started_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of when the pipeline started."},
 			{Name: "finished_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of when the pipeline finished."},
 			{Name: "committed_at", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of when the commit used by the pipeline was created."},
-			{Name: "duration", Type: proto.ColumnType_INT, Description: ""},
-			{Name: "coverage", Type: proto.ColumnType_STRING, Description: ""},
+			{Name: "duration", Type: proto.ColumnType_INT, Description: "Time in seconds the pipeline took to run."},
+			{Name: "queued_duration", Type: proto.ColumnType_INT, Description: "Time in seconds the pipeline was queued awaiting running."},
+			{Name: "coverage", Type: proto.ColumnType_STRING, Description: "Coverage"},
 			{Name: "web_url", Type: proto.ColumnType_STRING, Description: "The url to view the pipeline.", Transform: transform.FromField("WebURL")},
 			{Name: "project_id", Type: proto.ColumnType_INT, Description: "The ID of the project the pipeline was run against - link `gitlab_project.id`."},
 		},
@@ -79,24 +85,27 @@ func listProjectPipelineDetails(ctx context.Context, d *plugin.QueryData, h *plu
 	}
 
 	d.StreamListItem(ctx, &ProjectPipelineDetails{
-		ID:          pipeline.ID,
-		Status:      pipeline.Status,
-		Ref:         pipeline.Ref,
-		SHA:         pipeline.SHA,
-		BeforeSHA:   pipeline.BeforeSHA,
-		Tag:         pipeline.Tag,
-		YamlErrors:  pipeline.YamlErrors,
-		UserID:      pipeline.User.ID,
-		Username:    pipeline.User.Username,
-		CreatedAt:   pipeline.CreatedAt,
-		UpdatedAt:   pipeline.UpdatedAt,
-		StartedAt:   pipeline.StartedAt,
-		FinishedAt:  pipeline.FinishedAt,
-		CommittedAt: pipeline.CommittedAt,
-		Duration:    pipeline.Duration,
-		Coverage:    pipeline.Coverage,
-		WebURL:      pipeline.WebURL,
-		ProjectID:   projectId,
+		ID:             pipeline.ID,
+		IID:            pipeline.IID,
+		Status:         pipeline.Status,
+		Source:         pipeline.Source,
+		Ref:            pipeline.Ref,
+		SHA:            pipeline.SHA,
+		BeforeSHA:      pipeline.BeforeSHA,
+		Tag:            pipeline.Tag,
+		YamlErrors:     pipeline.YamlErrors,
+		UserID:         pipeline.User.ID,
+		Username:       pipeline.User.Username,
+		CreatedAt:      pipeline.CreatedAt,
+		UpdatedAt:      pipeline.UpdatedAt,
+		StartedAt:      pipeline.StartedAt,
+		FinishedAt:     pipeline.FinishedAt,
+		CommittedAt:    pipeline.CommittedAt,
+		Duration:       pipeline.Duration,
+		QueuedDuration: pipeline.QueuedDuration,
+		Coverage:       pipeline.Coverage,
+		WebURL:         pipeline.WebURL,
+		ProjectID:      projectId,
 	})
 
 	return nil, nil

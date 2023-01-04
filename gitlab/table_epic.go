@@ -46,6 +46,7 @@ func epicColumns() []*plugin.Column {
 			Name:        "iid",
 			Description: "The instance ID of the epic.",
 			Type:        proto.ColumnType_INT,
+			Transform:   transform.FromField("IID").NullIfZero(),
 		},
 		{
 			Name:        "group_id",

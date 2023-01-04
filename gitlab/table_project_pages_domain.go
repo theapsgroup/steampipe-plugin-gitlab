@@ -50,6 +50,21 @@ func tableProjectPagesDomain() *plugin.Table {
 				Description: "The ID of the project this custom pages domain belongs to - link `gitlab_project.id`.",
 				Transform:   transform.FromQual("project_id"),
 			},
+			{
+				Name:        "verified",
+				Type:        proto.ColumnType_BOOL,
+				Description: "Indicates if the domain is verified.",
+			},
+			{
+				Name:        "verification_code",
+				Type:        proto.ColumnType_STRING,
+				Description: "The verification code associated with the pages domain.",
+			},
+			{
+				Name:        "enabled_until",
+				Type:        proto.ColumnType_TIMESTAMP,
+				Description: "Timestamp at which the pages domain is disabled.",
+			},
 		},
 	}
 }
