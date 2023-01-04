@@ -1,7 +1,8 @@
-## v0.2.0 [WIP]
+## v0.2.0 [2023-01-04]
 
 _What's new?_
 
+- License Change: MPL 2.0 -> Apache 2.0
 - New Table [gitlab_merge_request_change](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_merge_request_change) to see all changes in a merge request.
 - Extended the `gitlab_branch` table with the following columns:
   - `commit_message`
