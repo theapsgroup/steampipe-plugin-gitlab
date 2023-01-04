@@ -802,23 +802,23 @@ func settingsColumns() []*plugin.Column {
 		},
 		{
 			Name:        "password_number_required",
-			Type:        proto.ColumnType_INT,
-			Description: "Number of numerics required in a password to validate correctly.",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if password must contain numerics.",
 		},
 		{
 			Name:        "password_symbol_required",
-			Type:        proto.ColumnType_INT,
-			Description: "Number of symbols required in a password to validate correctly.",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if password must contain symbols.",
 		},
 		{
 			Name:        "password_uppercase_required",
-			Type:        proto.ColumnType_INT,
-			Description: "Number of uppercase characters required in a password to validate correctly.",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if password must contain uppercase characters.",
 		},
 		{
 			Name:        "password_lowercase_required",
-			Type:        proto.ColumnType_INT,
-			Description: "Number of lowercase characters required in a password to validate correctly.",
+			Type:        proto.ColumnType_BOOL,
+			Description: "Indicates if password must contain lowercase characters.",
 		},
 		{
 			Name:        "performance_bar_allowed_group_path",
