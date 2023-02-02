@@ -43,6 +43,9 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project_pages_domain":     tableProjectPagesDomain(),
 			"gitlab_setting":                  tableSetting(),
 			"gitlab_merge_request_change":     tableMergeRequestChange(),
+			"gitlab_project_variable":         tableProjectVariable(),
+			"gitlab_group_variable":           tableGroupVariable(),
+			"gitlab_instance_variable":        tableInstanceVariable(),
 		},
 	}
 
