@@ -1,3 +1,11 @@
+## v0.2.1 [2023-02-02]
+
+_What's new?_
+
+- New table [gitlab_group_variable](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_group_variable)
+- New table [gitlab_project_variable](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_project_variable)
+- New table [gitlab_instance_variable](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables/gitlab_instance_variable)
+
 ## v0.2.0 [2023-01-04]
 
 _What's new?_
