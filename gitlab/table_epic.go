@@ -106,11 +106,13 @@ func epicColumns() []*plugin.Column {
 			Name:        "start_date",
 			Description: "Timestamp indicating the start of the epic.",
 			Type:        proto.ColumnType_TIMESTAMP,
+			Transform:   transform.FromField("StartDate").NullIfZero().Transform(isoTimeTransform),
 		},
 		{
 			Name:        "due_date",
 			Description: "Timestamp indicating the due date of the epic.",
 			Type:        proto.ColumnType_TIMESTAMP,
+			Transform:   transform.FromField("DueDate").NullIfZero().Transform(isoTimeTransform),
 		},
 		{
 			Name:        "end_date",

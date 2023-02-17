@@ -1,3 +1,9 @@
+## v0.2.2 [2023-02-17]
+
+_Bug fixes_
+
+- Fixed an issue in `gitlab_epic` table  where `start_date` and `due_date` weren't being transformed so caused query to fail [#44](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/44)
+
 ## v0.2.1 [2023-02-02]
 
 _What's new?_
