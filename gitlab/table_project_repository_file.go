@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -11,7 +12,7 @@ import (
 func tableProjectRepositoryFile() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_project_repository_file",
-		Description: "Details of a specific File from a Repository on a GitLab Project",
+		Description: "Obtain information on a file for a specific project/path/ref combination within the GitLab instance.",
 		List: &plugin.ListConfig{
 			KeyColumns: []*plugin.KeyColumn{
 				{
@@ -33,6 +34,41 @@ func tableProjectRepositoryFile() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
+func listRepoFile(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listRepoFile", "started")
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("listRepoFile", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
+	}
+
+	q := d.EqualsQuals
+	projectId := int(q["project_id"].GetInt64Value())
+	filePath := q["file_path"].GetStringValue()
+	ref := "main"
+	if q["ref"] != nil {
+		ref = q["ref"].GetStringValue()
+	}
+
+	opt := api.GetFileOptions{
+		Ref: &ref,
+	}
+
+	plugin.Logger(ctx).Debug("listRepoFile", "projectId", projectId, "filePath", filePath, "ref", ref)
+	file, _, err := conn.RepositoryFiles.GetFile(projectId, filePath, &opt)
+	if err != nil {
+		plugin.Logger(ctx).Error("listRepoFile", "projectId", projectId, "filePath", filePath, "ref", ref, "error", err)
+		return nil, fmt.Errorf("unable to obtain repository file %s for project_id %d on ref %s\n%v", filePath, projectId, ref, err)
+	}
+
+	d.StreamListItem(ctx, file)
+
+	plugin.Logger(ctx).Debug("listRepoFile", "completed successfully")
+	return nil, nil
+}
+
+// Column Function
 func repoFileColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
@@ -94,35 +130,4 @@ func repoFileColumns() []*plugin.Column {
 			Transform:   transform.FromQual("project_id"),
 		},
 	}
-}
-
-// Hydrate Functions
-func listRepoFile(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		return nil, err
-	}
-
-	q := d.EqualsQuals
-
-	projectId := int(q["project_id"].GetInt64Value())
-	filePath := q["file_path"].GetStringValue()
-
-	ref := "main"
-	if q["ref"] != nil {
-		ref = q["ref"].GetStringValue()
-	}
-
-	opt := api.GetFileOptions{
-		Ref: &ref,
-	}
-
-	file, _, err := conn.RepositoryFiles.GetFile(projectId, filePath, &opt)
-	if err != nil {
-		return nil, err
-	}
-
-	d.StreamListItem(ctx, file)
-
-	return nil, nil
 }

@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -10,7 +11,7 @@ import (
 func tableSetting() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_setting",
-		Description: "GitLab Settings",
+		Description: "Obtain information about the settings within the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listSettings,
 		},
@@ -20,21 +21,26 @@ func tableSetting() *plugin.Table {
 
 // Hydrate Functions
 func listSettings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listSettings", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listSettings", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	settings, _, err := conn.Settings.GetSettings()
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listSettings", "error", err)
+		return nil, fmt.Errorf("unable to obtain settings\n%v", err)
 	}
 
 	d.StreamListItem(ctx, settings)
 
+	plugin.Logger(ctx).Debug("listSettings", "completed successfully")
 	return nil, nil
 }
 
+// Column Function
 func settingsColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{

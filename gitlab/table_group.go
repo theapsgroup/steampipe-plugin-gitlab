@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -12,7 +13,7 @@ import (
 func tableGroup() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_group",
-		Description: "Groups within GitLab",
+		Description: "Obtain information about groups within the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listGroups,
 		},
@@ -24,10 +25,13 @@ func tableGroup() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
 func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listGroups", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listGroups", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	stats := true
@@ -37,9 +41,12 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	}}
 
 	for {
+		plugin.Logger(ctx).Debug("listGroups", "page", opt.Page, "perPage", opt.PerPage)
+
 		groups, resp, err := conn.Groups.ListGroups(opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listGroups", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain groups\n%v", err)
 		}
 
 		for _, group := range groups {
@@ -53,29 +60,37 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listGroups", "completed successfully")
 	return nil, nil
 }
 
 func getGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	groupId := int(d.EqualsQuals["id"].GetInt64Value())
-	opts := &api.GetGroupOptions{}
-
+	plugin.Logger(ctx).Debug("getGroup", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getGroup", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
+
+	groupId := int(d.EqualsQuals["id"].GetInt64Value())
+	opts := &api.GetGroupOptions{}
+	plugin.Logger(ctx).Debug("getGroup", "groupId", groupId)
 
 	group, _, err := conn.Groups.GetGroup(groupId, opts)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
+			plugin.Logger(ctx).Warn("getGroup", "groupId", groupId, "no group was found, returning empty result set")
 			return nil, nil
 		}
-		return nil, err
+		plugin.Logger(ctx).Error("getGroup", "groupId", groupId, "error", err)
+		return nil, fmt.Errorf("unable to obtain branches for group_id %d\n%v", groupId, err)
 	}
 
+	plugin.Logger(ctx).Debug("getGroup", "completed successfully")
 	return group, nil
 }
 
+// Column Function
 func groupColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{

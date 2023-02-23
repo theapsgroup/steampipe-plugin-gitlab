@@ -14,7 +14,6 @@ import (
 const publicGitLabBaseUrl = "https://gitlab.com/api/v4"
 
 func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
-
 	baseUrl := os.Getenv("GITLAB_ADDR")
 	token := os.Getenv("GITLAB_TOKEN")
 
@@ -29,14 +28,18 @@ func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 	}
 
 	if baseUrl == "" {
+		plugin.Logger(ctx).Info(fmt.Sprintf("no baseUrl was passed in - using %s", publicGitLabBaseUrl))
 		baseUrl = publicGitLabBaseUrl // Default to public GitLab if not set, rather than return an error.
 	}
 	if token == "" {
+		plugin.Logger(ctx).Error("no token provided in configuration file nor GITLAB_TOKEN environment variable")
 		return nil, fmt.Errorf("GitLab Private/Personal Access Token must be set either in GITLAB_TOKEN env var or in connection config file")
 	}
 
+	plugin.Logger(ctx).Debug("attempting to create new client", "baseUrl", baseUrl)
 	client, err := api.NewClient(token, api.WithBaseURL(baseUrl))
 	if err != nil {
+		plugin.Logger(ctx).Error("unable to create client", "baseUrl", baseUrl, "error", err)
 		return nil, err
 	}
 

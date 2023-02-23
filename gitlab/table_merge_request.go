@@ -12,7 +12,7 @@ import (
 func tableMergeRequest() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_merge_request",
-		Description: "All GitLab Merge Requests",
+		Description: "Obtain information about merge requests within the GitLab instance.",
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.AllColumns([]string{"iid", "project_id"}),
 			Hydrate:    getMergeRequest,
@@ -32,20 +32,25 @@ func tableMergeRequest() *plugin.Table {
 
 // Hydrate Functions
 func getMergeRequest(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("getMergeRequest", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getMergeRequest", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
 	iid := int(q["iid"].GetInt64Value())
 	projectId := int(q["project_id"].GetInt64Value())
+	plugin.Logger(ctx).Debug("getMergeRequest", "projectId", projectId, "iid", iid)
 
 	mergeRequest, _, err := conn.MergeRequests.GetMergeRequest(projectId, iid, &api.GetMergeRequestsOptions{})
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getMergeRequest", "projectId", projectId, "iid", iid, "error", err)
+		return nil, fmt.Errorf("unable to obtain merge request %d for project_id %d\n%v", iid, projectId, err)
 	}
 
+	plugin.Logger(ctx).Debug("getMergeRequest", "completed successfully")
 	return mergeRequest, nil
 }
 
@@ -57,11 +62,13 @@ func listMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		q["author_id"] == nil &&
 		q["reviewer_id"] == nil &&
 		isPublicGitLab(d) {
+		plugin.Logger(ctx).Error("listMergeRequests", "Public GitLab requires an '=' qualifier for at least one of the following columns 'reviewer_id', 'assignee_id', 'author_id', 'project_id' - none was provided")
 		return nil, fmt.Errorf("when using the gitlab_merge_request table with GitLab Cloud, `List`" +
 			"call requires an '=' qualifier for one or more of the following columns: 'project_id', 'author_id', 'assignee_id', 'reviewer_id'")
 	}
 
 	if q["project_id"] != nil {
+		plugin.Logger(ctx).Debug("listMergeRequests", "project_id qualifier obtained, re-directing SDK call to ListProjectMergeRequests")
 		return listProjectMergeRequests(ctx, d, h)
 	}
 
@@ -69,6 +76,7 @@ func listMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 }
 
 func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listProjectMergeRequests", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
@@ -87,22 +95,27 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 	if q["assignee_id"] != nil {
 		assigneeId := api.AssigneeID(q["assignee_id"].GetInt64Value())
 		opt.AssigneeID = assigneeId
+		plugin.Logger(ctx).Debug("listProjectMergeRequests", "filter[assignee_id]", assigneeId)
 	}
 
 	if q["author_id"] != nil {
 		authorId := int(q["author_id"].GetInt64Value())
 		opt.AuthorID = &authorId
+		plugin.Logger(ctx).Debug("listProjectMergeRequests", "filter[author_id]", authorId)
 	}
 
 	if q["reviewer_id"] != nil {
 		reviewerId := api.ReviewerID(q["reviewer_id"].GetInt64Value())
 		opt.ReviewerID = reviewerId
+		plugin.Logger(ctx).Debug("listProjectMergeRequests", "filter[reviewer_id]", reviewerId)
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listProjectMergeRequests", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
 		mergeRequests, response, err := conn.MergeRequests.ListProjectMergeRequests(projectId, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listProjectMergeRequests", "projectId", projectId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain merge requests for project_id %d\n%v", projectId, err)
 		}
 
 		for _, mergeRequest := range mergeRequests {
@@ -116,13 +129,16 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 		opt.Page = response.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listProjectMergeRequests", "completed successfully")
 	return nil, nil
 }
 
 func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listAllMergeRequests", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listAllMergeRequests", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
@@ -139,22 +155,27 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	if q["assignee_id"] != nil {
 		assigneeId := api.AssigneeID(q["assignee_id"].GetInt64Value())
 		opt.AssigneeID = assigneeId
+		plugin.Logger(ctx).Debug("listAllMergeRequests", "filter[assignee_id]", assigneeId)
 	}
 
 	if q["author_id"] != nil {
 		authorId := int(q["author_id"].GetInt64Value())
 		opt.AuthorID = &authorId
+		plugin.Logger(ctx).Debug("listAllMergeRequests", "filter[author_id]", authorId)
 	}
 
 	if q["reviewer_id"] != nil {
 		reviewerId := api.ReviewerID(q["reviewer_id"].GetInt64Value())
 		opt.ReviewerID = reviewerId
+		plugin.Logger(ctx).Debug("listAllMergeRequests", "filter[reviewer_id]", reviewerId)
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listAllMergeRequests", "page", opt.Page, "perPage", opt.PerPage)
 		mergeRequests, response, err := conn.MergeRequests.ListMergeRequests(opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listAllMergeRequests", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain merge requests\n%v", err)
 		}
 
 		for _, mergeRequest := range mergeRequests {
@@ -168,6 +189,7 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		opt.Page = response.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listAllMergeRequests", "completed successfully")
 	return nil, nil
 }
 

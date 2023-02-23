@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -24,7 +25,7 @@ type GroupMember struct {
 func tableGroupMember() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_group_member",
-		Description: "Group Members for a GitLab Group",
+		Description: "Obtain information about members of a specific group within the GitLab instance.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("group_id"),
 			Hydrate:    listGroupMembers,
@@ -33,23 +34,27 @@ func tableGroupMember() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
 func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listGroupMembers", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listGroupMembers", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
-
 	opt := &api.ListGroupMembersOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
 	}}
 
 	for {
+		plugin.Logger(ctx).Debug("listGroupMembers", "groupId", groupId, "page", opt.Page, "perPage", opt.PerPage)
 		members, resp, err := conn.Groups.ListAllGroupMembers(groupId, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listGroupMembers", "groupId", groupId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain members for group_id %d\n%v", groupId, err)
 		}
 
 		for _, member := range members {
@@ -74,9 +79,11 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listGroupMembers", "completed successfully")
 	return nil, nil
 }
 
+// Column Functions
 func groupMemberColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
