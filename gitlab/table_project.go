@@ -14,12 +14,12 @@ import (
 func tableProject() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_project",
-		Description: "Projects in the GitLab instance.",
+		Description: "Obtain information on projects in the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listProjects,
 			KeyColumns: []*plugin.KeyColumn{
-				{Name: "owner_id", Require: plugin.Optional},
-				{Name: "owner_username", Require: plugin.Optional},
+				{Name: "owner_id", Require: plugin.AnyOf},
+				{Name: "owner_username", Require: plugin.AnyOf},
 			},
 		},
 		Get: &plugin.GetConfig{
@@ -37,11 +37,12 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	if q["owner_id"] == nil &&
 		q["owner_username"] == nil &&
 		isPublicGitLab(d) {
-		return nil, fmt.Errorf("when using the gitlab_project table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: " +
-			"'id', 'owner_id', 'owner_username'")
+		plugin.Logger(ctx).Error("listProjects", "Public GitLab requires an '=' qualifier for at least one of the following columns 'id', 'owner_id', 'owner_username' - none was provided")
+		return nil, fmt.Errorf("when using the gitlab_project table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: 'id', 'owner_id', 'owner_username'")
 	}
 
 	if q["owner_id"] != nil || q["owner_username"] != nil {
+		plugin.Logger(ctx).Debug("listProjects", "owner_id or owner_username qualifier obtained, re-directing SDK call to ListUserProjects")
 		return listUserProjects(ctx, d, h)
 	}
 
@@ -49,9 +50,11 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 }
 
 func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listUserProjects", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listUserProjects", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
@@ -67,14 +70,18 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	var x interface{}
 	if q["owner_id"] != nil {
 		x = int(q["owner_id"].GetInt64Value())
+		plugin.Logger(ctx).Debug("listUserProjects", "filter[owner_id]", x.(int))
 	} else {
 		x = q["owner_username"].GetStringValue()
+		plugin.Logger(ctx).Debug("listUserProjects", "filter[owner_username]", x)
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listUserProjects", "page", opt.Page, "perPage", opt.PerPage)
 		projects, resp, err := conn.Projects.ListUserProjects(x, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listUserProjects", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain projects\n%v", err)
 		}
 
 		for _, project := range projects {
@@ -88,10 +95,12 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listUserProjects", "completed successfully")
 	return nil, nil
 }
 
 func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listAllProjects", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
@@ -106,9 +115,11 @@ func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listAllProjects", "page", opt.Page, "perPage", opt.PerPage)
 		projects, resp, err := conn.Projects.ListProjects(opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listAllProjects", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain issues\n%v", err)
 		}
 
 		for _, project := range projects {
@@ -122,10 +133,12 @@ func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listAllProjects", "completed successfully")
 	return nil, nil
 }
 
 func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("getProject", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
 		return nil, err
@@ -134,15 +147,18 @@ func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	q := d.EqualsQuals
 	id := int(q["id"].GetInt64Value())
 	stats := true
-
 	opt := &api.GetProjectOptions{
 		Statistics: &stats,
 	}
 
+	plugin.Logger(ctx).Debug("getProject", "id", id)
 	project, _, err := conn.Projects.GetProject(id, opt)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getProject", "id", id, "error", err)
+		return nil, fmt.Errorf("unable to obtain project with id %d\n%v", id, err)
 	}
+
+	plugin.Logger(ctx).Debug("getProject", "completed successfully")
 	return project, nil
 }
 

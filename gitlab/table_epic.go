@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -11,7 +12,7 @@ import (
 func tableEpic() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_epic",
-		Description: "Epics for a specific group in the GitLab instance.",
+		Description: "Obtain information about epics for a specific group within the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listEpics,
 			KeyColumns: []*plugin.KeyColumn{
@@ -35,6 +36,61 @@ func tableEpic() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
+func listEpics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listEpics", "started")
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("listEpics", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
+	}
+
+	q := d.EqualsQuals
+	groupId := int(q["group_id"].GetInt64Value())
+	opt := &api.ListGroupEpicsOptions{
+		ListOptions: api.ListOptions{
+			Page:    1,
+			PerPage: 50,
+		},
+	}
+
+	// Optional Qualifiers
+	if q["author_id"] != nil {
+		authorId := int(q["author_id"].GetInt64Value())
+		opt.AuthorID = &authorId
+		plugin.Logger(ctx).Debug("listEpics", "filter[author_id]", authorId)
+	}
+
+	if q["state"] != nil {
+		state := q["state"].GetStringValue()
+		opt.State = &state
+		plugin.Logger(ctx).Debug("listEpics", "filter[state]", state)
+	}
+
+	for {
+		plugin.Logger(ctx).Debug("listEpics", "groupId", groupId, "page", opt.Page, "perPage", opt.PerPage)
+		epics, resp, err := conn.Epics.ListGroupEpics(groupId, opt)
+		if err != nil {
+			plugin.Logger(ctx).Error("listEpics", "groupId", groupId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain branches for group_id %d\n%v", groupId, err)
+		}
+
+		for _, epic := range epics {
+			d.StreamListItem(ctx, epic)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		opt.Page = resp.NextPage
+	}
+
+	plugin.Logger(ctx).Debug("listEpics", "completed successfully")
+	return nil, nil
+}
+
+// Column Function
 func epicColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
@@ -155,52 +211,4 @@ func epicColumns() []*plugin.Column {
 			Type:        proto.ColumnType_INT,
 		},
 	}
-}
-
-func listEpics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.EqualsQuals
-
-	groupId := int(q["group_id"].GetInt64Value())
-
-	conn, err := connect(ctx, d)
-	if err != nil {
-		return nil, err
-	}
-
-	opt := &api.ListGroupEpicsOptions{
-		ListOptions: api.ListOptions{
-			Page:    1,
-			PerPage: 50,
-		},
-	}
-
-	// Optional Qualifiers
-	if q["author_id"] != nil {
-		authorId := int(q["author_id"].GetInt64Value())
-		opt.AuthorID = &authorId
-	}
-
-	if q["state"] != nil {
-		state := q["state"].GetStringValue()
-		opt.State = &state
-	}
-
-	for {
-		epics, resp, err := conn.Epics.ListGroupEpics(groupId, opt)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, epic := range epics {
-			d.StreamListItem(ctx, epic)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-
-		opt.Page = resp.NextPage
-	}
-
-	return nil, nil
 }

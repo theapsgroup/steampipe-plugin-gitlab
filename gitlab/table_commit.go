@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -12,7 +13,7 @@ import (
 func tableCommit() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_commit",
-		Description: "Commits in the given project.",
+		Description: "Obtain information about commits for a specific project within the GitLab instance.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("project_id"),
 			Hydrate:    listCommits,
@@ -25,28 +26,33 @@ func tableCommit() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
 func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
-	bTrue := true
-
+	plugin.Logger(ctx).Debug("listCommits", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listCommits", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	bTrue := true
 	opt := &api.ListCommitsOptions{All: &bTrue, WithStats: &bTrue, ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
 	}}
 
 	for {
+		plugin.Logger(ctx).Debug("listCommits", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
 		commits, resp, err := conn.Commits.ListCommits(projectId, opt)
 		if err != nil {
 			// Handle error of project id not being valid.
 			if strings.Contains(err.Error(), "404") {
+				plugin.Logger(ctx).Warn("listCommits", "projectId", projectId, "no project was found, returning empty result set")
 				return nil, nil
 			}
-			return nil, err
+			plugin.Logger(ctx).Error("listCommits", "projectId", projectId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain commits for project_id %d\n%v", projectId, err)
 		}
 
 		for _, commit := range commits {
@@ -61,31 +67,41 @@ func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 
 		opt.Page = resp.NextPage
 	}
+
+	plugin.Logger(ctx).Debug("listCommits", "completed successfully")
 	return nil, nil
 }
 
 func getCommit(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
-	id := d.EqualsQuals["id"].GetStringValue()
-
+	plugin.Logger(ctx).Debug("getCommit", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getCommit", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
+
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	id := d.EqualsQuals["id"].GetStringValue()
+	plugin.Logger(ctx).Debug("getCommit", "projectId", projectId, "commitId", id)
 
 	commit, _, err := conn.Commits.GetCommit(projectId, id)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
+			plugin.Logger(ctx).Warn("getCommit", "projectId", projectId, "commitId", id, "no project was found, returning empty result set")
 			return nil, nil
 		}
-		return nil, err
+		plugin.Logger(ctx).Error("getCommit", "projectId", projectId, "commitId", id, "error", err)
+		return nil, fmt.Errorf("unable to obtain commits for project_id %d\n%v", projectId, err)
 	}
 
 	commit.ProjectID = projectId
 	commit.Message = strings.TrimRight(commit.Message, "\n") // remove trailing newline from commit message.
+
+	plugin.Logger(ctx).Debug("getCommit", "completed successfully")
 	return commit, nil
 }
 
+// Column Function
 func commitColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{

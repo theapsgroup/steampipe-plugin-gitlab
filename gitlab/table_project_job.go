@@ -2,35 +2,17 @@ package gitlab
 
 import (
 	"context"
-	"time"
-
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
-type ProjectJob struct {
-	ID         int
-	Name       string
-	Status     string
-	Ref        string
-	Stage      string
-	CreatedAt  *time.Time
-	StartedAt  *time.Time
-	FinishedAt *time.Time
-	Duration   float64
-	WebURL     string
-	UserID     int
-	Username   string
-	PipelineID int
-	ProjectID  int
-}
-
 func tableProjectJob() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_project_job",
-		Description: "Jobs for a GitLab Project",
+		Description: "Obtain information about jobs for a specific project within the GitLab instance.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.SingleColumn("project_id"),
 			Hydrate:    listProjectJobs,
@@ -39,23 +21,27 @@ func tableProjectJob() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
 func listProjectJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listProjectJobs", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listProjectJobs", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
-
 	opt := &api.ListJobsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 20,
 	}}
 
 	for {
+		plugin.Logger(ctx).Debug("listProjectJobs", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
 		jobs, resp, err := conn.Jobs.ListProjectJobs(projectId, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listProjectJobs", "projectId", projectId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain jobs for project_id %d\n%v", projectId, err)
 		}
 
 		for _, job := range jobs {
@@ -69,9 +55,11 @@ func listProjectJobs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listProjectJobs", "completed successfully")
 	return nil, nil
 }
 
+// Column Function
 func projectJobColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{

@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	api "github.com/xanzy/go-gitlab"
 )
@@ -9,7 +10,7 @@ import (
 func tableMyProject() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_my_project",
-		Description: "Projects in the GitLab Instance where authenticated user is a member.",
+		Description: "Obtain information about projects that the authenticated user is a member of within the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listMyProjects,
 		},
@@ -22,9 +23,11 @@ func tableMyProject() *plugin.Table {
 }
 
 func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listMyProjects", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listMyProjects", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	membership := true
@@ -40,9 +43,11 @@ func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listMyProjects", "page", opt.Page, "perPage", opt.PerPage)
 		projects, resp, err := conn.Projects.ListProjects(opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listMyProjects", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain projects for current user\n%v", err)
 		}
 
 		for _, project := range projects {
@@ -56,13 +61,16 @@ func listMyProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listMyProjects", "completed successfully")
 	return nil, nil
 }
 
 func getMyProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("getMyProject", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getMyProject", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 	q := d.EqualsQuals
 	id := int(q["id"].GetInt64Value())
@@ -70,9 +78,13 @@ func getMyProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 	opt := &api.GetProjectOptions{Statistics: &stats}
 
+	plugin.Logger(ctx).Debug("getMyProject", "id", id)
 	project, _, err := conn.Projects.GetProject(id, opt)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("getMyProject", "id", id, "error", err)
+		return nil, fmt.Errorf("unable to obtain project with id %d\n%v", id, err)
 	}
+
+	plugin.Logger(ctx).Debug("getMyProject", "completed successfully")
 	return project, nil
 }

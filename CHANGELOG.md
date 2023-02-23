@@ -1,3 +1,9 @@
+## v0.3.0 [WIP]
+
+_What's new?_
+
+- Added extensive logging throughout to help assist debugging any issues that may arise when using this plugin. [#41](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/41)
+
 ## v0.2.2 [2023-02-17]
 
 _Bug fixes_

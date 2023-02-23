@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -11,7 +12,7 @@ import (
 func tableMergeRequestChange() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_merge_request_change",
-		Description: "Get all changes associated with a merge request.",
+		Description: "Obtain information about all changes associated with a specific merge request from within the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate:    listChanges,
 			KeyColumns: plugin.AllColumns([]string{"iid", "project_id"}),
@@ -22,27 +23,33 @@ func tableMergeRequestChange() *plugin.Table {
 
 // Hydrate Functions
 func listChanges(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listChanges", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listChanges", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
 	iid := int(q["iid"].GetInt64Value())
 	projectId := int(q["project_id"].GetInt64Value())
 
+	plugin.Logger(ctx).Debug("listChanges", "projectId", projectId, "iid", iid)
 	mergeRequest, _, err := conn.MergeRequests.GetMergeRequest(projectId, iid, &api.GetMergeRequestsOptions{})
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listChanges", "projectId", projectId, "iid", iid, "error", err)
+		return nil, fmt.Errorf("unable to obtain changes for merge request %d for project_id %d\n%v", iid, projectId, err)
 	}
 
 	for _, change := range mergeRequest.Changes {
 		d.StreamListItem(ctx, change)
 	}
 
+	plugin.Logger(ctx).Debug("listChanges", "completed successfully")
 	return nil, nil
 }
 
+// Column Function
 func mergeRequestChangeColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{

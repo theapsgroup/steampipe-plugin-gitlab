@@ -12,7 +12,7 @@ import (
 func tableIssue() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_issue",
-		Description: "All GitLab Issues",
+		Description: "Obtain information about issues with the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listIssues,
 			KeyColumns: []*plugin.KeyColumn{
@@ -30,16 +30,17 @@ func tableIssue() *plugin.Table {
 // Hydrate Functions
 func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	q := d.EqualsQuals
-
 	if q["assignee"] == nil &&
 		q["assignee_id"] == nil &&
 		q["author_id"] == nil &&
 		q["project_id"] == nil &&
 		isPublicGitLab(d) {
+		plugin.Logger(ctx).Error("listIssues", "Public GitLab requires an '=' qualifier for at least one of the following columns 'assignee', 'assignee_id', 'author_id', 'project_id' - none was provided")
 		return nil, fmt.Errorf("when using the gitlab_issue table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: 'assignee', 'assignee_id', 'author_id', 'project_id'")
 	}
 
 	if q["project_id"] != nil {
+		plugin.Logger(ctx).Debug("listIssues", "project_id qualifier obtained, re-directing SDK call to ListProjectIssues")
 		return listProjectIssues(ctx, d, h)
 	}
 
@@ -47,9 +48,11 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 }
 
 func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listProjectIssues", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listProjectIssues", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
@@ -66,13 +69,15 @@ func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		},
 	}
 
-	opt = addOptionalProjectIssueQualifiers(opt, q)
+	opt = addOptionalProjectIssueQualifiers(ctx, opt, q)
 	projectId := int(q["project_id"].GetInt64Value())
 
 	for {
+		plugin.Logger(ctx).Debug("listProjectIssues", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
 		issues, resp, err := conn.Issues.ListProjectIssues(projectId, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listProjectIssues", "projectId", projectId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain issues for project_id %d\n%v", projectId, err)
 		}
 
 		for _, issue := range issues {
@@ -86,13 +91,16 @@ func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listProjectIssues", "completed successfully")
 	return nil, nil
 }
 
 func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listAllIssues", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listAllIssues", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
 	q := d.EqualsQuals
@@ -104,12 +112,14 @@ func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 			PerPage: 50,
 		},
 	}
-	opt = addOptionalIssueQualifiers(opt, q)
+	opt = addOptionalIssueQualifiers(ctx, opt, q)
 
 	for {
+		plugin.Logger(ctx).Debug("listAllIssues", "page", opt.Page, "perPage", opt.PerPage)
 		issues, resp, err := conn.Issues.ListIssues(opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listAllIssues", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain issues\n%v", err)
 		}
 
 		for _, issue := range issues {
@@ -122,60 +132,69 @@ func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listAllIssues", "completed successfully")
 	return nil, nil
 }
 
 // Assist Functions
-func addOptionalProjectIssueQualifiers(opts *api.ListProjectIssuesOptions, q map[string]*proto.QualValue) *api.ListProjectIssuesOptions {
+func addOptionalProjectIssueQualifiers(ctx context.Context, opts *api.ListProjectIssuesOptions, q map[string]*proto.QualValue) *api.ListProjectIssuesOptions {
 	if q["assignee"] != nil {
 		assignee := q["assignee"].GetStringValue()
 		opts.AssigneeUsername = &assignee
+		plugin.Logger(ctx).Debug("listProjectIssues", "filter[assignee]", assignee)
 	}
 
 	if q["assignee_id"] != nil {
 		assigneeId := int(q["assignee_id"].GetInt64Value())
 		opts.AssigneeID = api.AssigneeID(assigneeId)
+		plugin.Logger(ctx).Debug("listProjectIssues", "filter[assignee_id]", assigneeId)
 	}
 
 	if q["author_id"] != nil {
 		authorId := int(q["author_id"].GetInt64Value())
 		opts.AuthorID = &authorId
+		plugin.Logger(ctx).Debug("listProjectIssues", "filter[author_id]", authorId)
 	}
 
 	if q["confidential"] != nil {
 		confidential := q["confidential"].GetBoolValue()
 		opts.Confidential = &confidential
+		plugin.Logger(ctx).Debug("listProjectIssues", "filter[confidential]", confidential)
 	}
 
 	return opts
 }
 
-func addOptionalIssueQualifiers(opts *api.ListIssuesOptions, q map[string]*proto.QualValue) *api.ListIssuesOptions {
+func addOptionalIssueQualifiers(ctx context.Context, opts *api.ListIssuesOptions, q map[string]*proto.QualValue) *api.ListIssuesOptions {
 	if q["assignee"] != nil {
 		assignee := q["assignee"].GetStringValue()
 		opts.AssigneeUsername = &assignee
+		plugin.Logger(ctx).Debug("listAllIssues", "filter[assignee]", assignee)
 	}
 
 	if q["assignee_id"] != nil {
 		assigneeId := int(q["assignee_id"].GetInt64Value())
 		opts.AssigneeID = api.AssigneeID(assigneeId)
+		plugin.Logger(ctx).Debug("listAllIssues", "filter[assignee_id]", assigneeId)
 	}
 
 	if q["author_id"] != nil {
 		authorId := int(q["author_id"].GetInt64Value())
 		opts.AuthorID = &authorId
+		plugin.Logger(ctx).Debug("listAllIssues", "filter[author_id]", authorId)
 	}
 
 	if q["confidential"] != nil {
 		confidential := q["confidential"].GetBoolValue()
 		opts.Confidential = &confidential
+		plugin.Logger(ctx).Debug("listAllIssues", "filter[confidential]", confidential)
 	}
 
 	return opts
 }
 
 // Transform Functions
-func parseAssignees(ctx context.Context, input *transform.TransformData) (interface{}, error) {
+func parseAssignees(_ context.Context, input *transform.TransformData) (interface{}, error) {
 	if input.Value == nil {
 		return nil, nil
 	}

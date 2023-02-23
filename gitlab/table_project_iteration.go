@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"fmt"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -11,7 +12,7 @@ import (
 func tableProjectIteration() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_project_iteration",
-		Description: "Iterations for a specific project in the GitLab instance.",
+		Description: "Obtain information about iterations for a specific project in the GitLab instance.",
 		List: &plugin.ListConfig{
 			Hydrate: listProjectIterations,
 			KeyColumns: []*plugin.KeyColumn{
@@ -25,16 +26,17 @@ func tableProjectIteration() *plugin.Table {
 	}
 }
 
+// Hydrate Functions
 func listProjectIterations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	q := d.EqualsQuals
-
-	projectId := int(q["project_id"].GetInt64Value())
-
+	plugin.Logger(ctx).Debug("listProjectIterations", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		return nil, err
+		plugin.Logger(ctx).Error("listProjectIterations", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
+	q := d.EqualsQuals
+	projectId := int(q["project_id"].GetInt64Value())
 	opt := &api.ListProjectIterationsOptions{
 		ListOptions: api.ListOptions{
 			Page:    1,
@@ -43,9 +45,11 @@ func listProjectIterations(ctx context.Context, d *plugin.QueryData, h *plugin.H
 	}
 
 	for {
+		plugin.Logger(ctx).Debug("listProjectIterations", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
 		iterations, resp, err := conn.ProjectIterations.ListProjectIterations(projectId, opt)
 		if err != nil {
-			return nil, err
+			plugin.Logger(ctx).Error("listProjectIterations", "projectId", projectId, "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain iterations for project_id %d\n%v", projectId, err)
 		}
 
 		for _, iteration := range iterations {
@@ -59,9 +63,11 @@ func listProjectIterations(ctx context.Context, d *plugin.QueryData, h *plugin.H
 		opt.Page = resp.NextPage
 	}
 
+	plugin.Logger(ctx).Debug("listProjectIterations", "completed successfully")
 	return nil, nil
 }
 
+// Column Function
 func projectIterationColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
