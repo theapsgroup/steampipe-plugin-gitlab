@@ -46,6 +46,9 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project_variable":         tableProjectVariable(),
 			"gitlab_group_variable":           tableGroupVariable(),
 			"gitlab_instance_variable":        tableInstanceVariable(),
+			"gitlab_group_access_request":     tableGroupAccessRequest(),
+			"gitlab_project_access_request":   tableProjectAccessRequest(),
+			"gitlab_application":              tableApplication(),
 		},
 	}
 
