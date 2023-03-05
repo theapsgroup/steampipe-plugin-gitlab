@@ -7,6 +7,8 @@ _What's new?_
   - `gitlab_application` (Only accessible to administrators)
   - `gitlab_group_access_request`
   - `gitlab_project_access_request`
+  - `gitlab_project_container_registry`
+  - `gitlab_project_deployment`
 - Added some columns to the `gitlab_issue` table (requires GitLab Premium)
   - `epic_id`
   - `epic_iid`

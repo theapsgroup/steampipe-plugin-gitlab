@@ -50,6 +50,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project_access_request":     tableProjectAccessRequest(),
 			"gitlab_application":                tableApplication(),
 			"gitlab_project_container_registry": tableProjectContainerRegistry(),
+			"gitlab_project_deployment":         tableProjectDeployment(),
 		},
 	}
 
