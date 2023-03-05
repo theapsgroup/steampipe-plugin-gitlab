@@ -199,5 +199,11 @@ func projectDeploymentColumns() []*plugin.Column {
 			Description: "The ID of the pipeline for the deployable.",
 			Transform:   transform.FromField("Deployable.Pipeline.ID"),
 		},
+		{
+			Name:        "project_id",
+			Type:        proto.ColumnType_INT,
+			Description: "The ID of the project - link to `gitlab_project.id",
+			Transform:   transform.FromQual("project_id"),
+		},
 	}
 }
