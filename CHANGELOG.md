@@ -3,6 +3,18 @@
 _What's new?_
 
 - Added extensive logging throughout to help assist debugging any issues that may arise when using this plugin. [#41](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/41)
+- Added the following tables:
+  - `gitlab_application` (Only accessible to administrators)
+  - `gitlab_group_access_request`
+  - `gitlab_project_access_request`
+  - `gitlab_project_container_registry`
+  - `gitlab_project_deployment`
+- Added some columns to the `gitlab_issue` table (requires GitLab Premium)
+  - `epic_id`
+  - `epic_iid`
+  - `epic_title`
+  - `epic_url`
+  - `epic_group_id`
 
 ## v0.2.2 [2023-02-17]
 

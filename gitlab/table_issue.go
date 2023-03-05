@@ -479,5 +479,36 @@ func issueColumns() []*plugin.Column {
 			Type:        proto.ColumnType_INT,
 			Description: "Epic issue id.",
 		},
+		// Epic Fields (Not all on SDK object are turned by this API call.)
+		{
+			Name:        "epic_id",
+			Type:        proto.ColumnType_INT,
+			Description: "The ID of the associated epic.",
+			Transform:   transform.FromField("Epic.ID"),
+		},
+		{
+			Name:        "epic_iid",
+			Type:        proto.ColumnType_INT,
+			Description: "The IID of the associated epic.",
+			Transform:   transform.FromField("Epic.IID"),
+		},
+		{
+			Name:        "epic_title",
+			Type:        proto.ColumnType_STRING,
+			Description: "Title of the associated epic.",
+			Transform:   transform.FromField("Epic.Title"),
+		},
+		{
+			Name:        "epic_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The url of the associated epic.",
+			Transform:   transform.FromField("Epic.URL"),
+		},
+		{
+			Name:        "epic_group_id",
+			Type:        proto.ColumnType_INT,
+			Description: "The group ID of the associated epic.",
+			Transform:   transform.FromField("Epic.GroupID"),
+		},
 	}
 }
