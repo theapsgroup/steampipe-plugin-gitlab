@@ -1,3 +1,9 @@
+## v0.4.0 [WIP]
+
+_What's new?_
+
+- Added new table: `gitlab_group_project`
+
 ## v0.3.0 [2023-03-05]
 
 _What's new?_
