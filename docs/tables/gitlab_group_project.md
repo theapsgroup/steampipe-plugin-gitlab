@@ -2,6 +2,8 @@
 
 The `gitlab_group_project`  table will obtain information from all projects associated to the group (& it's sub-groups).
 
+However, **you must specify** a `group_id` in the where or join clause.
+
 ## Examples
 
 ### List all projects for a group and its subgroups

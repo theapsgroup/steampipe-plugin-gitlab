@@ -3,6 +3,7 @@
 _What's new?_
 
 - Added new table: `gitlab_group_project`
+- Added new table: `gitlab_group_subgroup`
 
 ## v0.3.0 [2023-03-05]
 

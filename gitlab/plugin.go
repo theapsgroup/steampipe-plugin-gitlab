@@ -52,6 +52,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_project_container_registry": tableProjectContainerRegistry(),
 			"gitlab_project_deployment":         tableProjectDeployment(),
 			"gitlab_group_project":              tableGroupProject(),
+			"gitlab_group_subgroup":             tableGroupSubgroup(),
 		},
 	}
 
