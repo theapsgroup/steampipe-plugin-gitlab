@@ -5,6 +5,10 @@ _What's new?_
 - Added new table: `gitlab_group_project`
 - Added new table: `gitlab_group_subgroup`
 
+_Enhancements_
+
+- Updated: Recompiled with [steampipe-plugin-sdk v5.3.0](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v530-2023-03-16)
+
 ## v0.3.0 [2023-03-05]
 
 _What's new?_
