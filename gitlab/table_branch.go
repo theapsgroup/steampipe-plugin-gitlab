@@ -184,5 +184,11 @@ func branchColumns() []*plugin.Column {
 			Description: "The date of the latest commit on the branch.",
 			Transform:   transform.FromField("Commit.CommittedDate"),
 		},
+		{
+			Name:        "commit_url",
+			Type:        proto.ColumnType_STRING,
+			Description: "The url of the commit on the branch.",
+			Transform:   transform.FromField("Commit.WebURL"),
+		},
 	}
 }

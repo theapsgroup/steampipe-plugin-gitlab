@@ -3,6 +3,7 @@
 _What's new?_
 
 - Added `license_key` to `gitlab_project`, `gitlab_my_project` & `gitlab_group_project` tables.
+- Added `commit_url` to `gitlab_branch` table.git 
 
 ## v0.4.0 [2023-05-05]
 
