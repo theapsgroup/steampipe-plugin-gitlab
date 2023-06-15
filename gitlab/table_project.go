@@ -521,6 +521,12 @@ func projectColumns() []*plugin.Column {
 			Transform:   transform.FromField("License.Name"),
 		},
 		{
+			Name:        "license_key",
+			Type:        proto.ColumnType_STRING,
+			Description: "The projects license spdx id/key.",
+			Transform:   transform.FromField("License.Key"),
+		},
+		{
 			Name:        "shared_runners_enabled",
 			Type:        proto.ColumnType_BOOL,
 			Description: "Indicates if the project has shared runners enabled.",
