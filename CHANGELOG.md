@@ -1,3 +1,9 @@
+## v0.4.1 [WIP]
+
+_What's new?_
+
+- Added `license_key` to `gitlab_project`, `gitlab_my_project` & `gitlab_group_project` tables.
+
 ## v0.4.0 [2023-05-05]
 
 _What's new?_
