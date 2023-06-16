@@ -6,6 +6,10 @@ _What's new?_
 - Added `commit_url` to `gitlab_branch` table.
 - Added `access_level_description` to `gitlab_project_access_request` & `gitlab_group_access_request` tables.
 
+_Bug fixes_
+
+- `gitlab_epic` table now returns empty instead of an error when the account doesn't have the epics feature.
+
 ## v0.4.0 [2023-05-05]
 
 _What's new?_

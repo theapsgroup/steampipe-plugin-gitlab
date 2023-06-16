@@ -71,6 +71,9 @@ func listEpics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		plugin.Logger(ctx).Debug("listEpics", "groupId", groupId, "page", opt.Page, "perPage", opt.PerPage)
 		epics, resp, err := conn.Epics.ListGroupEpics(groupId, opt)
 		if err != nil {
+			if resp.StatusCode == 403 {
+				return nil, nil
+			}
 			plugin.Logger(ctx).Error("listEpics", "groupId", groupId, "page", opt.Page, "error", err)
 			return nil, fmt.Errorf("unable to obtain branches for group_id %d\n%v", groupId, err)
 		}
