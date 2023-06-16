@@ -93,6 +93,12 @@ func groupAccessRequestColumns() []*plugin.Column {
 			Description: "The numeric value of the access level requested by the user.",
 		},
 		{
+			Name:        "access_level_description",
+			Type:        proto.ColumnType_STRING,
+			Description: "The access level requested by the user.",
+			Transform:   transform.FromField("AccessLevel").Transform(accessLevelTransform),
+		},
+		{
 			Name:        "created_at",
 			Type:        proto.ColumnType_TIMESTAMP,
 			Description: "Timestamp of access request creation.",

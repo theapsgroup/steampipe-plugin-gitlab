@@ -60,6 +60,32 @@ func isoTimeTransform(_ context.Context, input *transform.TransformData) (interf
 	return time.Parse("2006-01-02", x)
 }
 
+func accessLevelTransform(_ context.Context, input *transform.TransformData) (interface{}, error) {
+	if input.Value == nil {
+		return nil, nil
+	}
+
+	x := *input.Value.(*api.AccessLevelValue)
+	switch x {
+	case api.NoPermissions:
+		return "No Permissions", nil
+	case api.MinimalAccessPermissions:
+		return "Minimal Access", nil
+	case api.GuestPermissions:
+		return "Guest", nil
+	case api.ReporterPermissions:
+		return "Reporter", nil
+	case api.DeveloperPermissions:
+		return "Developer", nil
+	case api.MaintainerPermissions:
+		return "Maintainer", nil
+	case api.OwnerPermissions:
+		return "Owner", nil
+	default:
+		return "No Permissions", nil
+	}
+}
+
 // parseAccessLevel is a util func for returning a string description based on integer for access level
 func parseAccessLevel(input int) string {
 	switch input {
