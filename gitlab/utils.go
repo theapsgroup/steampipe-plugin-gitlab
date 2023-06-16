@@ -86,7 +86,7 @@ func parseAccessLevel(input int) string {
 func isPublicGitLab(d *plugin.QueryData) bool {
 	cfg := GetConfig(d.Connection)
 	if &cfg != nil {
-		if cfg.BaseUrl != nil && *cfg.BaseUrl == publicGitLabBaseUrl {
+		if cfg.BaseUrl == nil || *cfg.BaseUrl == publicGitLabBaseUrl {
 			return true
 		}
 	}
