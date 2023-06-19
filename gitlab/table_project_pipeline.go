@@ -7,6 +7,8 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
+	"strings"
+	"time"
 )
 
 func tableProjectPipeline() *plugin.Table {
@@ -14,8 +16,23 @@ func tableProjectPipeline() *plugin.Table {
 		Name:        "gitlab_project_pipeline",
 		Description: "Obtain information about pipelines for a specific project within the GitLab instance.",
 		List: &plugin.ListConfig{
-			KeyColumns: plugin.SingleColumn("project_id"),
-			Hydrate:    listProjectPipelines,
+			KeyColumns: []*plugin.KeyColumn{
+				{
+					Name:    "project_id",
+					Require: plugin.Required,
+				},
+				{
+					Name:      "updated_at",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "status",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+			},
+			Hydrate: listProjectPipelines,
 		},
 		Columns: projectPipelineColumns(),
 	}
@@ -34,6 +51,53 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 		Page:    1,
 		PerPage: 20,
 	}}
+
+	if d.Quals["updated_at"] != nil {
+		for _, q := range d.Quals["updated_at"].Quals {
+			givenTime := q.Value.GetTimestampValue().AsTime()
+			beforeTime := givenTime.Add(time.Duration(-1) * time.Second)
+			afterTime := givenTime.Add(time.Second * 1)
+
+			switch q.Operator {
+			case ">":
+				opt.UpdatedAfter = &afterTime
+			case ">=":
+				opt.UpdatedAfter = &givenTime
+			case "=":
+				opt.UpdatedAfter = &beforeTime
+				opt.UpdatedBefore = &afterTime
+			case "<=":
+				opt.UpdatedBefore = &givenTime
+			case "<":
+				opt.UpdatedBefore = &beforeTime
+			}
+		}
+	}
+
+	if d.EqualsQuals["status"] != nil {
+		s := d.EqualsQuals["status"].GetStringValue()
+
+		switch strings.ToLower(s) {
+		case "pending":
+			opt.Status = api.BuildState(api.Pending)
+		case "created":
+			opt.Status = api.BuildState(api.Created)
+		case "running":
+			opt.Status = api.BuildState(api.Canceled)
+		case "success":
+			opt.Status = api.BuildState(api.Success)
+		case "failed":
+			opt.Status = api.BuildState(api.Failed)
+		case "canceled":
+			opt.Status = api.BuildState(api.Canceled)
+		case "skipped":
+			opt.Status = api.BuildState(api.Skipped)
+		case "manual":
+			opt.Status = api.BuildState(api.Manual)
+		default:
+			return nil, nil
+		}
+	}
 
 	for {
 		plugin.Logger(ctx).Debug("listProjectPipelines", "projectId", projectId, "page", opt.Page, "perPage", opt.PerPage)
