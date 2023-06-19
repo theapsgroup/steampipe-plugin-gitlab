@@ -1,11 +1,11 @@
-## v0.4.1 [WIP]
+## v0.4.1 [2023-06-19]
 
 _What's new?_
 
 - Added `license_key` to `gitlab_project`, `gitlab_my_project` & `gitlab_group_project` tables.
 - Added `commit_url` to `gitlab_branch` table.
 - Added `access_level_description` to `gitlab_project_access_request` & `gitlab_group_access_request` tables.
-- Added `updated_at` and `status` key columns to `gitlab_project_pipeline` table
+- Added `updated_at` and `status` filters to `gitlab_project_pipeline` table.
 
 _Bug fixes_
 
