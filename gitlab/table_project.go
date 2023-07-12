@@ -18,8 +18,8 @@ func tableProject() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listProjects,
 			KeyColumns: []*plugin.KeyColumn{
-				{Name: "owner_id", Require: plugin.AnyOf},
-				{Name: "owner_username", Require: plugin.AnyOf},
+				{Name: "owner_id", Require: plugin.Optional},
+				{Name: "owner_username", Require: plugin.Optional},
 			},
 		},
 		Get: &plugin.GetConfig{
