@@ -1,3 +1,8 @@
+## v0.4.2 [TBD]
+
+_Bug fixes_
+- Remediated issue in `gitlab_project` table where obtaining all projects was no longer possible when using `on-premise` variant.
+
 ## v0.4.1 [2023-06-19]
 
 _What's new?_
