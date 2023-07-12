@@ -20,7 +20,7 @@ from
   gitlab_my_project
 order by
   star_count desc
-limit 1;  
+limit 10;  
 ```
 
 ### Get project creation information
