@@ -18,13 +18,10 @@ func tableProject() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listProjects,
 			KeyColumns: []*plugin.KeyColumn{
+				{Name: "id", Require: plugin.Optional},
 				{Name: "owner_id", Require: plugin.Optional},
 				{Name: "owner_username", Require: plugin.Optional},
 			},
-		},
-		Get: &plugin.GetConfig{
-			KeyColumns: plugin.SingleColumn("id"),
-			Hydrate:    getProject,
 		},
 		Columns: projectColumns(),
 	}
@@ -36,9 +33,15 @@ func listProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 	if q["owner_id"] == nil &&
 		q["owner_username"] == nil &&
+		q["id"] == nil &&
 		isPublicGitLab(d) {
 		plugin.Logger(ctx).Error("listProjects", "Public GitLab requires an '=' qualifier for at least one of the following columns 'id', 'owner_id', 'owner_username' - none was provided")
 		return nil, fmt.Errorf("when using the gitlab_project table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: 'id', 'owner_id', 'owner_username'")
+	}
+
+	if q["id"] != nil {
+		plugin.Logger(ctx).Debug("listProjects", "id qualifier obtained, re-directing SDK call to GetProject")
+		return getProject(ctx, d, h)
 	}
 
 	if q["owner_id"] != nil || q["owner_username"] != nil {
@@ -158,8 +161,10 @@ func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		return nil, fmt.Errorf("unable to obtain project with id %d\n%v", id, err)
 	}
 
+	d.StreamListItem(ctx, project)
+
 	plugin.Logger(ctx).Debug("getProject", "completed successfully")
-	return project, nil
+	return nil, nil
 }
 
 // Column Functions
