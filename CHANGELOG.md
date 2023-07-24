@@ -1,7 +1,7 @@
 ## v0.4.2 [TBD]
 
 _Bug fixes_
-- Remediated issue in `gitlab_project` table where obtaining all projects was no longer possible when using `on-premise` variant.
+- Remediated some issues with `gitlab_project` table related to hydrate functions and SaaS vs on-prem.
 
 ## v0.4.1 [2023-06-19]
 
