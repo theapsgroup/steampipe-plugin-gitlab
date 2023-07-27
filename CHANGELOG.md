@@ -1,4 +1,4 @@
-## v0.4.2 [TBD]
+## v0.4.2 [2023-07-27]
 
 _Bug fixes_
 - Remediated some issues with `gitlab_project` table related to hydrate functions and SaaS vs on-prem.
