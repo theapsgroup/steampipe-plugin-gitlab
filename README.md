@@ -2,45 +2,98 @@
 
 # GitLab plugin for Steampipe
 
-## Query GitLab with SQL
+* **[Get started →](https://hub.steampipe.io/plugins/theapsgroup/gitlbb)**
+* Documentation: [Table definitions & examples](https://hub.steampipe.io/plugins/theapsgroup/gitlab/tables)
+* Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
+* Get involved: [Issues](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues)
 
-Use SQL to query GitLab. Example:
+## Quick start
 
-```sql
-select * from gitlab_project
-```
-
-## Get Started
-
-### Installation
+Install the plugin with [Steampipe](https://steampipe.io/downloads):
 
 ```shell
 steampipe plugin install theapsgroup/gitlab
 ```
 
-Or if you prefer, you can clone this repository and build/install from source directly.
+[Configure the plugin](https://hub.steampipe.io/plugins/theapsgroup/gitlab#configuration) using the configuration file:
 
 ```shell
-go build -o steampipe-plugin-gitlab.plugin
-
-mv steampipe-plugin-gitlab.plugin ~/.steampipe/plugins/hub.steampipe.io/plugins/theapsgroup/gitlab@latest/steampipe-plugin-gitlab.plugin
-
-cp config/gitlab.spc ~/.steampipe/config/gitlab.spc
+vi ~/.steampipe/gitlab.spc
 ```
 
-Configuration is preferably done by ensuring you have the following Environment Variables set:
+Or environment variables:
 
-- `GITLAB_ADDR` for the address of your GitLab API endpoint (e.g `https://gitlab.mycompany.com/api/v4`)
-- `GITLAB_TOKEN` for the API token used to access GitLab (private or [personal access](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) tokens accepted)
+```shell
+export GITLAB_TOKEN=f7Ea3C3ojOY0GLzmhS5kE
+```
 
-These can also be set in the configuration file:
-`vi ~/.steampipe/config/gitlab.spc` 
+Start Steampipe:
 
-> Note: If `GITLAB_ADDR` (`baseurl` in the config file) is not set it will default to the public cloud-hosted GitLab instance -> https://gitlab.com/api/v4
+```shell
+steampipe query
+```
 
-## Documentation
+Run a query:
 
-Further documentation can he [found here](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/docs/index.md)
+```sql
+select
+  full_path,
+  visibility,
+  forks_count,
+  star_count
+from
+  gitlab_my_project;
+```
+
+## Developing
+
+Prerequisites:
+
+* [Steampipe](https://steampipe.io/downloads)
+* [Golang](https://golang.org/doc/install)
+* GitLab (either hosted or self-hosted)
+* GitLab Token (either private or [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html))
+
+Clone:
+
+```sh
+git clone https://github.com/theapsgroup/steampipe-plugin-gitlab.git
+cd steampipe-plugin-gitlab
+```
+
+Build, which automatically installs the new version to your `~/.steampipe/plugins` directory:
+
+```sh
+make
+```
+
+Configure the plugin:
+
+```sh
+cp config/* ~/.steampipe/config
+vi ~/.steampipe/config/gitlab.spc
+```
+
+Try it!
+
+```shell
+steampipe query
+> .inspect gitlab
+```
+
+Further reading:
+
+* [Writing plugins](https://steampipe.io/docs/develop/writing-plugins)
+* [Writing your first table](https://steampipe.io/docs/develop/writing-your-first-table)
+
+## Contributing
+
+All contributions are subject to the [Apache 2.0 open source license](https://github.com/theapsgroup/steampipe-plugin-gitlab/blob/main/LICENSE).
+
+`help wanted` issues:
+
+* [Steampipe](https://github.com/turbot/steampipe/labels/help%20wanted)
+* [GitLab Plugin](https://github.com/theapsgroup/steampipe-plugin-gitlab/labels/help%20wanted)
 
 ## Credits
 
