@@ -18,6 +18,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		TableMap: map[string]*plugin.Table{
 			"gitlab_version":                    tableVersion(),
 			"gitlab_user":                       tableUser(),
+			"gitlab_user_events":                tableUserEvents(),
 			"gitlab_group":                      tableGroup(),
 			"gitlab_project":                    tableProject(),
 			"gitlab_issue":                      tableIssue(),

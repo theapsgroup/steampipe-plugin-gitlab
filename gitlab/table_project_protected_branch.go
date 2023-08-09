@@ -3,6 +3,7 @@ package gitlab
 import (
 	"context"
 	"fmt"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -31,9 +32,10 @@ func listProjectProtectedBranches(ctx context.Context, d *plugin.QueryData, h *p
 	}
 
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
-	opt := &api.ListProtectedBranchesOptions{
+	opt := &api.ListProtectedBranchesOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
+	},
 	}
 
 	for {
