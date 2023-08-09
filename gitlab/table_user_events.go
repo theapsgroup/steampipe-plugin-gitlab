@@ -60,31 +60,28 @@ func tableUserEvents() *plugin.Table {
 		Name:        "gitlab_user_events",
 		Description: "Obtain information about a user's events.",
 		List: &plugin.ListConfig{
-			/*
-				KeyColumns: []*plugin.KeyColumn{
-					{
-						Name:    "author_id",
-						Require: plugin.Required,
-					},
-					{
-						Name:      "created_at",
-						Require:   plugin.Optional,
-						Operators: []string{">", ">=", "=", "<", "<="},
-					},
-					{
-						Name:      "target_type",
-						Require:   plugin.Optional,
-						Operators: []string{"="},
-					},
-					{
-						Name:      "action",
-						Require:   plugin.Optional,
-						Operators: []string{"="},
-					},
+			KeyColumns: []*plugin.KeyColumn{
+				{
+					Name:    "author_id",
+					Require: plugin.Required,
 				},
-			*/
-			KeyColumns: plugin.SingleColumn("author_id"),
-			Hydrate:    listUserEvents,
+				{
+					Name:      "created_at",
+					Require:   plugin.Optional,
+					Operators: []string{">", ">=", "=", "<", "<="},
+				},
+				{
+					Name:      "target_type",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+				{
+					Name:      "action_name",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
+			},
+			Hydrate: listUserEvents,
 		},
 		Columns: userEventColumns(),
 	}
@@ -105,42 +102,40 @@ func listUserEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		PerPage: 50,
 	}}
 
-	/*
-		if d.Quals["created_at"] != nil {
-			for _, q := range d.Quals["created_at"].Quals {
-				givenTime := q.Value.GetTimestampValue().AsTime()
-				beforeTime := givenTime.Add(time.Duration(-1) * time.Second)
-				afterTime := givenTime.Add(time.Second * 1)
-				givenISOTime := gitlab.ISOTime(givenTime)
-				beforeISOTime := gitlab.ISOTime(beforeTime)
-				afterISOTime := gitlab.ISOTime(afterTime)
+	if d.Quals["created_at"] != nil {
+		for _, q := range d.Quals["created_at"].Quals {
+			givenTime := q.Value.GetTimestampValue().AsTime()
+			beforeTime := givenTime.Add(time.Duration(-1) * time.Second)
+			afterTime := givenTime.Add(time.Second * 1)
+			givenISOTime := api.ISOTime(givenTime)
+			beforeISOTime := api.ISOTime(beforeTime)
+			afterISOTime := api.ISOTime(afterTime)
 
-				switch q.Operator {
-				case ">":
-					opt.After = &afterISOTime
-				case ">=":
-					opt.After = &givenISOTime
-				case "=":
-					opt.After = &beforeISOTime
-					opt.Before = &afterISOTime
-				case "<=":
-					opt.Before = &givenISOTime
-				case "<":
-					opt.Before = &beforeISOTime
-				}
+			switch q.Operator {
+			case ">":
+				opt.After = &afterISOTime
+			case ">=":
+				opt.After = &givenISOTime
+			case "=":
+				opt.After = &beforeISOTime
+				opt.Before = &afterISOTime
+			case "<=":
+				opt.Before = &givenISOTime
+			case "<":
+				opt.Before = &beforeISOTime
 			}
 		}
+	}
 
-		if d.Quals["target_type"] != nil {
-			targetType := gitlab.EventTargetTypeValue(d.EqualsQuals["target_type"].GetStringValue())
-			opt.TargetType = &targetType
-		}
+	if d.Quals["target_type"] != nil {
+		targetType := api.EventTargetTypeValue(d.EqualsQuals["target_type"].GetStringValue())
+		opt.TargetType = &targetType
+	}
 
-		if d.Quals["action"] != nil {
-			action := gitlab.EventTypeValue(d.EqualsQuals["action"].GetStringValue())
-			opt.Action = &action
-		}
-	*/
+	if d.Quals["action_name"] != nil {
+		action := api.EventTypeValue(d.EqualsQuals["action_name"].GetStringValue())
+		opt.Action = &action
+	}
 
 	for {
 		plugin.Logger(ctx).Debug("listUserEvents", "userID", userID, "page", opt.Page, "perPage", opt.PerPage)
