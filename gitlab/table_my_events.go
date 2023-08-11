@@ -12,16 +12,12 @@ import (
 	api "github.com/xanzy/go-gitlab"
 )
 
-func tableUserEvents() *plugin.Table {
+func tableMyEvents() *plugin.Table {
 	return &plugin.Table{
-		Name:        "gitlab_user_events",
-		Description: "Obtain information about a user's events.",
+		Name:        "gitlab_my_events",
+		Description: "Obtain information about my events.",
 		List: &plugin.ListConfig{
 			KeyColumns: []*plugin.KeyColumn{
-				{
-					Name:    "author_id",
-					Require: plugin.Required,
-				},
 				{
 					Name:      "created_at",
 					Require:   plugin.Optional,
@@ -38,22 +34,21 @@ func tableUserEvents() *plugin.Table {
 					Operators: []string{"="},
 				},
 			},
-			Hydrate: listUserEvents,
+			Hydrate: listMyEvents,
 		},
-		Columns: userEventColumns(),
+		Columns: myEventColumns(),
 	}
 }
 
 // Hydrate Functions
-func listUserEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	plugin.Logger(ctx).Debug("listUserEvents", "started")
+func listMyEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("listMyEvents", "started")
 	conn, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("listUserEvents", "unable to establish a connection", err)
+		plugin.Logger(ctx).Error("listMyEvents", "unable to establish a connection", err)
 		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
-	userID := int(d.EqualsQuals["author_id"].GetInt64Value())
 	opt := &api.ListContributionEventsOptions{ListOptions: api.ListOptions{
 		Page:    1,
 		PerPage: 50,
@@ -97,11 +92,11 @@ func listUserEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	}
 
 	for {
-		plugin.Logger(ctx).Debug("listUserEvents", "userID", userID, "page", opt.Page, "perPage", opt.PerPage)
-		events, resp, err := conn.Users.ListUserContributionEvents(userID, opt)
+		plugin.Logger(ctx).Debug("listMyEvents", "page", opt.Page, "perPage", opt.PerPage)
+		events, resp, err := conn.Events.ListCurrentUserContributionEvents(opt)
 		if err != nil {
-			plugin.Logger(ctx).Error("listUserEvents", "userID", userID, "page", opt.Page, "error", err)
-			return nil, fmt.Errorf("unable to obtain events for user_id %d\n%v", userID, err)
+			plugin.Logger(ctx).Error("listMyEvents", "page", opt.Page, "error", err)
+			return nil, fmt.Errorf("unable to obtain my events\n%v", err)
 		}
 
 		for _, event := range events {
@@ -115,12 +110,12 @@ func listUserEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		opt.Page = resp.NextPage
 	}
 
-	plugin.Logger(ctx).Debug("listUserEvents", "completed successfully")
+	plugin.Logger(ctx).Debug("listMyEvents", "completed successfully")
 	return nil, nil
 }
 
 // Column Function
-func userEventColumns() []*plugin.Column {
+func myEventColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
 			Name:        "id",
