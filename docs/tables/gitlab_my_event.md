@@ -1,6 +1,6 @@
-# Table: gitlab_my_events
+# Table: gitlab_my_event
 
-The `gitlab_my_events` table can be used to query information about your activity on a gitlab system.
+The `gitlab_my_event` table can be used to query information about your activity on a gitlab system.
 
 ## Examples
 
@@ -9,7 +9,7 @@ The `gitlab_my_events` table can be used to query information about your activit
 select
   *
 from
-  gitlab_my_events;
+  gitlab_my_event;
 ```
 
 ### Get all activity since 2023-08-01
@@ -17,7 +17,7 @@ from
 select
   *
 from
-  gitlab_my_events
+  gitlab_my_event
 where
   created_at > '2023-08-01';
 ```

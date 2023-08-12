@@ -14,7 +14,7 @@ import (
 
 func tableMyEvents() *plugin.Table {
 	return &plugin.Table{
-		Name:        "gitlab_my_events",
+		Name:        "gitlab_my_event",
 		Description: "Obtain information about my events.",
 		List: &plugin.ListConfig{
 			KeyColumns: []*plugin.KeyColumn{
