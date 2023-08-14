@@ -4,7 +4,8 @@ The `gitlab_my_event` table can be used to query information about your activity
 
 ## Examples
 
-### Get all activity you're associated with
+### List all event activity associated with the logged in user
+
 ```sql
 select
   *
