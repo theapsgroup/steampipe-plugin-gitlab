@@ -129,11 +129,7 @@ func userEventColumns() []*plugin.Column {
 			Type:        proto.ColumnType_INT,
 			Description: "The event ID",
 		},
-		{
-			Name:        "title",
-			Type:        proto.ColumnType_STRING,
-			Description: "Possibly abandoned title of the event",
-		},
+		// The Go gitlab library has a Title attribute but the api no longer provides it.
 		{
 			Name:        "project_id",
 			Type:        proto.ColumnType_INT,
