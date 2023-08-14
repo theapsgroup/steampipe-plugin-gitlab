@@ -32,10 +32,9 @@ func listProjectProtectedBranches(ctx context.Context, d *plugin.QueryData, h *p
 	}
 
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
-	opt := &api.ListProtectedBranchesOptions{ListOptions: api.ListOptions{
+	opt := &api.ListProtectedBranchesOptions{
 		Page:    1,
 		PerPage: 50,
-	},
 	}
 
 	for {
