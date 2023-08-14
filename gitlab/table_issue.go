@@ -3,7 +3,6 @@ package gitlab
 import (
 	"context"
 	"fmt"
-
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -17,7 +16,6 @@ func tableIssue() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listIssues,
 			KeyColumns: []*plugin.KeyColumn{
-				{Name: "id", Require: plugin.Optional},
 				{Name: "assignee", Require: plugin.Optional},
 				{Name: "assignee_id", Require: plugin.Optional},
 				{Name: "author_id", Require: plugin.Optional},
@@ -36,15 +34,9 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 		q["assignee_id"] == nil &&
 		q["author_id"] == nil &&
 		q["project_id"] == nil &&
-		q["id"] == nil &&
 		isPublicGitLab(d) {
 		plugin.Logger(ctx).Error("listIssues", "Public GitLab requires an '=' qualifier for at least one of the following columns 'assignee', 'assignee_id', 'author_id', 'project_id' - none was provided")
 		return nil, fmt.Errorf("when using the gitlab_issue table with GitLab Cloud, `List` call requires an '=' qualifier for one or more of the following columns: 'assignee', 'assignee_id', 'author_id', 'project_id'")
-	}
-
-	if q["id"] != nil {
-		plugin.Logger(ctx).Debug("listIssues", "id qualifier obtained, re-directing SDK call to GetIssueByID")
-		return getIssue(ctx, d, h)
 	}
 
 	if q["project_id"] != nil {
@@ -53,34 +45,6 @@ func listIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	}
 
 	return listAllIssues(ctx, d, h)
-}
-
-func getIssue(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	plugin.Logger(ctx).Debug("getIssue", "started")
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("getIssue", "unable to establish a connection", err)
-		return nil, fmt.Errorf("unable to establish a connection: %v", err)
-	}
-
-	q := d.EqualsQuals
-	if q["id"] == nil {
-		return nil, nil
-	}
-
-	id := int(q["id"].GetInt64Value())
-
-	plugin.Logger(ctx).Debug("getIssue", "id", id)
-	issue, _, err := conn.Issues.GetIssueByID(id)
-	if err != nil {
-		plugin.Logger(ctx).Error("getIssue", "id", id)
-		return nil, fmt.Errorf("unable to obtain issue for issue id %d\n%v", id, err)
-	}
-
-	d.StreamListItem(ctx, issue)
-
-	plugin.Logger(ctx).Debug("getIssue", "completed successfully")
-	return nil, nil
 }
 
 func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
