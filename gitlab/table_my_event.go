@@ -9,6 +9,7 @@ import (
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -100,6 +101,7 @@ func listMyEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		}
 
 		for _, event := range events {
+			plugin.Logger(ctx).Debug("listMyEvents", "event", event)
 			d.StreamListItem(ctx, event)
 		}
 
@@ -146,6 +148,7 @@ func myEventColumns() []*plugin.Column {
 			Name:        "target_iid",
 			Type:        proto.ColumnType_INT,
 			Description: "The target IID",
+			Transform:   transform.FromField("TargetIID").NullIfZero(),
 		},
 		{
 			Name:        "target_type",
