@@ -1,4 +1,3 @@
-// Package gitlab implements gitlab api calls for steampipe.
 package gitlab
 
 import (
@@ -41,7 +40,7 @@ func tableUserEvents() *plugin.Table {
 			},
 			Hydrate: listUserEvents,
 		},
-		Columns: userEventColumns(),
+		Columns: eventColumns(),
 	}
 }
 
@@ -122,7 +121,7 @@ func listUserEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 }
 
 // Column Function
-func userEventColumns() []*plugin.Column {
+func eventColumns() []*plugin.Column {
 	return []*plugin.Column{
 		{
 			Name:        "id",

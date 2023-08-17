@@ -1,4 +1,3 @@
-// Package gitlab implements gitlab api calls for steampipe.
 package gitlab
 
 import (
@@ -7,9 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	api "github.com/xanzy/go-gitlab"
 )
 
@@ -37,7 +34,7 @@ func tableMyEvents() *plugin.Table {
 			},
 			Hydrate: listMyEvents,
 		},
-		Columns: myEventColumns(),
+		Columns: eventColumns(),
 	}
 }
 
@@ -114,77 +111,4 @@ func listMyEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 	plugin.Logger(ctx).Debug("listMyEvents", "completed successfully")
 	return nil, nil
-}
-
-// Column Function
-func myEventColumns() []*plugin.Column {
-	return []*plugin.Column{
-		{
-			Name:        "id",
-			Type:        proto.ColumnType_INT,
-			Description: "The event ID",
-		},
-		// The Go gitlab library has a Title attribute but the api no longer provides it.
-		{
-			Name:        "project_id",
-			Type:        proto.ColumnType_INT,
-			Description: "The project ID",
-		},
-		{
-			Name:        "action_name",
-			Type:        proto.ColumnType_STRING,
-			Description: "The action this event tracks: approved, closed, commented on, created, destroyed, expired, joined, left, merged, pushed to, reopened, updated",
-		},
-		{
-			Name:        "target_id",
-			Type:        proto.ColumnType_INT,
-			Description: "The target ID",
-		},
-		{
-			Name:        "target_iid",
-			Type:        proto.ColumnType_INT,
-			Description: "The target IID",
-			Transform:   transform.FromField("TargetIID").NullIfZero(),
-		},
-		{
-			Name:        "target_type",
-			Type:        proto.ColumnType_STRING,
-			Description: "What the event was: issue, milestone, merge_request, note, project, snippet, user",
-		},
-		{
-			Name:        "author_id",
-			Type:        proto.ColumnType_INT,
-			Description: "The ID of the user who created the event",
-		},
-		{
-			Name:        "target_title",
-			Type:        proto.ColumnType_STRING,
-			Description: "The title of the target",
-		},
-		{
-			Name:        "created_at",
-			Type:        proto.ColumnType_TIMESTAMP,
-			Description: "When the event was created",
-		},
-		{
-			Name:        "push_data",
-			Type:        proto.ColumnType_JSON,
-			Description: "JSON struct if there's push data",
-		},
-		{
-			Name:        "note",
-			Type:        proto.ColumnType_JSON,
-			Description: "JSON struct if there's a note",
-		},
-		{
-			Name:        "author",
-			Type:        proto.ColumnType_JSON,
-			Description: "JSON struct describing the user",
-		},
-		{
-			Name:        "author_username",
-			Type:        proto.ColumnType_STRING,
-			Description: "author_username",
-		},
-	}
 }
