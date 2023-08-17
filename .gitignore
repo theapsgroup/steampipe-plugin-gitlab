@@ -38,3 +38,6 @@ steampipe-plugin-gitlab.plugin
 
 # Goland
 .idea/
+
+# Vim
+.*.swp
