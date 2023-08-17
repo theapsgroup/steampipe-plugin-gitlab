@@ -1,3 +1,9 @@
+## v0.5.0 [tbd]
+
+_What's new?_
+
+- Added new tables: `gitlab_my_event` & `gitlab_user_event` - Thanks [@lyda](https://github.com/lyda)
+
 ## v0.4.2 [2023-07-27]
 
 _Bug fixes_
