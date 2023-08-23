@@ -1,8 +1,12 @@
-## v0.5.0 [tbd]
+## v0.5.0 [2023-08-23]
 
 _What's new?_
 
 - Added new tables: `gitlab_my_event` & `gitlab_user_event` - Thanks [@lyda](https://github.com/lyda)
+
+_Enhancements_
+
+- Increased minimum page size across all tables to `50` to reduce calls and improve performance.
 
 ## v0.4.2 [2023-07-27]
 

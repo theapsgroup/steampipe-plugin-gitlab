@@ -31,7 +31,7 @@ func listApplications(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 	opt := &api.ListApplicationsOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}
 
 	for {

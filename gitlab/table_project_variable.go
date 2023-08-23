@@ -41,7 +41,7 @@ func listProjectVars(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 	opt := &api.ListProjectVariablesOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}
 
 	for {

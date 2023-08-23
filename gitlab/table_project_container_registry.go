@@ -39,7 +39,7 @@ func listProjectContainerRegistries(ctx context.Context, d *plugin.QueryData, h 
 	opt := &api.ListRegistryRepositoriesOptions{
 		ListOptions: api.ListOptions{
 			Page:    1,
-			PerPage: 20,
+			PerPage: 50,
 		},
 	}
 

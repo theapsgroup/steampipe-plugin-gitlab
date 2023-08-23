@@ -42,7 +42,7 @@ func listGroupVars(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
 	opt := &api.ListGroupVariablesOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}
 
 	for {

@@ -97,7 +97,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 		plugin.Logger(ctx).Debug("getUser", "completed successfully")
 		return user, nil
 	} else {
-		opt := &api.ListUsersOptions{Username: &userName, ListOptions: api.ListOptions{Page: 1, PerPage: 10}}
+		opt := &api.ListUsersOptions{Username: &userName, ListOptions: api.ListOptions{Page: 1, PerPage: 50}}
 		plugin.Logger(ctx).Debug("getUser", "filter[username]", userName)
 
 		user, _, err := conn.Users.ListUsers(opt)

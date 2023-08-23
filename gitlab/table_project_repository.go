@@ -39,7 +39,7 @@ func listRepositoryTree(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	opt := &api.ListTreeOptions{
 		ListOptions: api.ListOptions{
 			Page:    1,
-			PerPage: 20,
+			PerPage: 50,
 		},
 		Recursive: api.Bool(true),
 	}

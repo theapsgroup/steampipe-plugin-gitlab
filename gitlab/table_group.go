@@ -37,7 +37,7 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	stats := true
 	opt := &api.ListGroupsOptions{Statistics: &stats, ListOptions: api.ListOptions{
 		Page:    1,
-		PerPage: 30,
+		PerPage: 50,
 	}}
 
 	for {

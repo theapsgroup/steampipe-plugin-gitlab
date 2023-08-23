@@ -33,7 +33,7 @@ func listProjectJobs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 	opt := &api.ListJobsOptions{ListOptions: api.ListOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}}
 
 	for {

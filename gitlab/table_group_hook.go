@@ -32,7 +32,7 @@ func listGroupHooks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
 	opt := gitlab.ListGroupHooksOptions{
 		Page:    1,
-		PerPage: 30,
+		PerPage: 50,
 	}
 
 	for {

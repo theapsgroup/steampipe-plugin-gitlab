@@ -38,7 +38,7 @@ func listBranches(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 	opt := &api.ListBranchesOptions{ListOptions: api.ListOptions{
 		Page:    1,
-		PerPage: 10,
+		PerPage: 50,
 	}}
 
 	for {

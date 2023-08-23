@@ -36,7 +36,7 @@ func listInstanceVars(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 	opt := &api.ListInstanceVariablesOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}
 
 	for {

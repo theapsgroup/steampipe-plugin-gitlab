@@ -49,7 +49,7 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
 	opt := &api.ListProjectPipelinesOptions{ListOptions: api.ListOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}}
 
 	if d.Quals["updated_at"] != nil {

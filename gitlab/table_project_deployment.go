@@ -44,7 +44,7 @@ func listProjectDeployments(ctx context.Context, d *plugin.QueryData, h *plugin.
 	opt := &api.ListProjectDeploymentsOptions{
 		ListOptions: api.ListOptions{
 			Page:    1,
-			PerPage: 20,
+			PerPage: 50,
 		},
 	}
 

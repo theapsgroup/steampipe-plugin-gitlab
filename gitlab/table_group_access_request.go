@@ -38,7 +38,7 @@ func listGroupAccessRequests(ctx context.Context, d *plugin.QueryData, h *plugin
 	groupId := int(d.EqualsQuals["group_id"].GetInt64Value())
 	opt := &api.ListAccessRequestsOptions{
 		Page:    1,
-		PerPage: 20,
+		PerPage: 50,
 	}
 
 	for {

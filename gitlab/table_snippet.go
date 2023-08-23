@@ -28,7 +28,10 @@ func listSnippets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		return nil, fmt.Errorf("unable to establish a connection: %v", err)
 	}
 
-	opt := &api.ListSnippetsOptions{Page: 1, PerPage: 30}
+	opt := &api.ListSnippetsOptions{
+		Page:    1,
+		PerPage: 50,
+	}
 
 	for {
 		plugin.Logger(ctx).Debug("listSnippets", "page", opt.Page, "perPage", opt.PerPage)
