@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"strings"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -15,6 +16,10 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			Schema:      ConfigSchema,
 		},
 		DefaultTransform: transform.FromGo().NullIfZero(),
+		DefaultIgnoreConfig: &plugin.IgnoreConfig{
+			ShouldIgnoreErrorFunc: ignoreErrorsContaining([]string{
+				"404",
+			})},
 		TableMap: map[string]*plugin.Table{
 			"gitlab_application":                tableApplication(),
 			"gitlab_branch":                     tableBranch(),
@@ -59,4 +64,17 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 	}
 
 	return p
+}
+
+func ignoreErrorsContaining(terms []string) plugin.ErrorPredicateWithContext {
+	return func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData, err error) bool {
+		if err != nil {
+			for _, term := range terms {
+				if strings.Contains(err.Error(), term) {
+					return true
+				}
+			}
+		}
+		return false
+	}
 }
