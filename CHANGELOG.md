@@ -1,3 +1,9 @@
+## vNext [tbd]
+
+_Enhancements_
+
+- Added `DefaultIgnoreConfig` so `404` errors are ignored and return null rather than causing an error terminating your query.
+
 ## v0.5.0 [2023-08-23]
 
 _What's new?_
