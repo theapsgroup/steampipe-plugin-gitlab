@@ -89,6 +89,11 @@ func listUserProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 		for _, project := range projects {
 			d.StreamListItem(ctx, project)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listUserProjects", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {
@@ -127,6 +132,11 @@ func listAllProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 		for _, project := range projects {
 			d.StreamListItem(ctx, project)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listAllProjects", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

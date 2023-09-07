@@ -54,6 +54,11 @@ func listProjectIterations(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 		for _, iteration := range iterations {
 			d.StreamListItem(ctx, iteration)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectIterations", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

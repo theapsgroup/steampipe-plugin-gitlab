@@ -73,6 +73,11 @@ func listProjectMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 				ProjectID:   projectId,
 				CreatedAt:   member.CreatedAt,
 			})
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectMembers", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

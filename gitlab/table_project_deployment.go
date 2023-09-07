@@ -58,6 +58,11 @@ func listProjectDeployments(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 		for _, dep := range deps {
 			d.StreamListItem(ctx, dep)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectDeployments", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

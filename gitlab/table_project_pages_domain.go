@@ -46,6 +46,11 @@ func listProjectPagesDomains(ctx context.Context, d *plugin.QueryData, h *plugin
 
 		for _, domain := range domains {
 			d.StreamListItem(ctx, domain)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectPagesDomains", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

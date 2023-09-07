@@ -47,6 +47,11 @@ func listGroupSubgroups(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 		for _, group := range groups {
 			d.StreamListItem(ctx, group)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listGroupSubgroups", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

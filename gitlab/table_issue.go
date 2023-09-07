@@ -82,6 +82,11 @@ func listProjectIssues(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 		for _, issue := range issues {
 			d.StreamListItem(ctx, issue)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectIssues", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {
@@ -124,6 +129,11 @@ func listAllIssues(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 
 		for _, issue := range issues {
 			d.StreamListItem(ctx, issue)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listAllIssues", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {
