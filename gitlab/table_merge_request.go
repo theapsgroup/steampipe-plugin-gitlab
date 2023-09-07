@@ -120,6 +120,11 @@ func listProjectMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugi
 
 		for _, mergeRequest := range mergeRequests {
 			d.StreamListItem(ctx, mergeRequest)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectMergeRequests", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if response.NextPage == 0 {
@@ -180,6 +185,11 @@ func listAllMergeRequests(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 		for _, mergeRequest := range mergeRequests {
 			d.StreamListItem(ctx, mergeRequest)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listAllMergeRequests", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if response.NextPage == 0 {

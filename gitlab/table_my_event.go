@@ -100,6 +100,11 @@ func listMyEvents(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		for _, event := range events {
 			plugin.Logger(ctx).Debug("listMyEvents", "event", event)
 			d.StreamListItem(ctx, event)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listMyEvents", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

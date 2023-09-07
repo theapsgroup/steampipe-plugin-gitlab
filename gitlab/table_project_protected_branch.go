@@ -47,6 +47,11 @@ func listProjectProtectedBranches(ctx context.Context, d *plugin.QueryData, h *p
 
 		for _, branch := range branches {
 			d.StreamListItem(ctx, branch)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectProtectedBranches", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

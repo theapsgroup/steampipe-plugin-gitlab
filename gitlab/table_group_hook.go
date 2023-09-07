@@ -45,6 +45,11 @@ func listGroupHooks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 		for _, hook := range hooks {
 			d.StreamListItem(ctx, hook)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listGroupHooks", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

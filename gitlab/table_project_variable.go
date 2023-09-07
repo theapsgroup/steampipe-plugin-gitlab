@@ -54,6 +54,11 @@ func listProjectVars(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 		for _, v := range vars {
 			d.StreamListItem(ctx, v)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectVars", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

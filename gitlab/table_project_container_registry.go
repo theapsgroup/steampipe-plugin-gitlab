@@ -53,6 +53,11 @@ func listProjectContainerRegistries(ctx context.Context, d *plugin.QueryData, h 
 
 		for _, cr := range crs {
 			d.StreamListItem(ctx, cr)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectContainerRegistries", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

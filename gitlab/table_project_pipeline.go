@@ -109,6 +109,11 @@ func listProjectPipelines(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 		for _, pipeline := range pipelines {
 			d.StreamListItem(ctx, pipeline)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listProjectPipelines", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

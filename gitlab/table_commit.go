@@ -59,6 +59,11 @@ func listCommits(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 			commit.ProjectID = projectId
 			commit.Message = strings.TrimRight(commit.Message, "\n") // remove trailing newline from commit message.
 			d.StreamListItem(ctx, commit)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listCommits", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

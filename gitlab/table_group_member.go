@@ -70,6 +70,11 @@ func listGroupMembers(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 				AccessDesc:  parseAccessLevel(int(member.AccessLevel)),
 				GroupID:     groupId,
 			})
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listGroupMembers", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

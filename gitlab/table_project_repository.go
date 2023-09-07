@@ -54,6 +54,11 @@ func listRepositoryTree(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 		for _, node := range nodes {
 			d.StreamListItem(ctx, node)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listRepositoryTree", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {

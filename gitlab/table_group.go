@@ -51,6 +51,11 @@ func listGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 		for _, group := range groups {
 			d.StreamListItem(ctx, group)
+			// Context can be cancelled due to manual cancellation or the limit has been hit
+			if d.RowsRemaining(ctx) == 0 {
+				plugin.Logger(ctx).Debug("listGroups", "completed successfully")
+				return nil, nil
+			}
 		}
 
 		if resp.NextPage == 0 {
