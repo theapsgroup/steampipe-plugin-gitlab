@@ -1,8 +1,13 @@
-## vNext [tbd]
+## v0.5.1 [2023-09-07]
 
 _Enhancements_
 
 - Added `DefaultIgnoreConfig` so `404` errors are ignored and return null rather than causing an error terminating your query.
+
+_Bug fixes_
+
+- Fixed [#52](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/52) where `gitlab_project_job` wasn't returning results.
+- Fixed [#60](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/62) where paginated tables would continue to query extra pages after limit/manual cancellation.
 
 ## v0.5.0 [2023-08-23]
 
