@@ -209,6 +209,7 @@ func projectJobColumns() []*plugin.Column {
 			Name:        "project_id",
 			Type:        proto.ColumnType_INT,
 			Description: "The ID of the project the job was run against - link `gitlab_project.id`.",
+			Transform:   transform.FromQual("project_id"),
 		},
 		{
 			Name:        "commit_id",
