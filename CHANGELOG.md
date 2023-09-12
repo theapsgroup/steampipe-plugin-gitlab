@@ -1,3 +1,9 @@
+## vNext [tbd]
+
+_Enhancements_
+
+- Added new `trace` column to the `gitlab_project_job` table - Thanks [@pdecat](https://github.com/pdecat)
+
 ## v0.5.1 [2023-09-07]
 
 _Enhancements_
