@@ -3,6 +3,9 @@ package gitlab
 import (
 	"context"
 	"fmt"
+	"io"
+	"math"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -62,6 +65,40 @@ func listProjectJobs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 	plugin.Logger(ctx).Debug("listProjectJobs", "completed successfully")
 	return nil, nil
+}
+
+func getProjectJobTrace(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Debug("getProjectJobTrace", "started")
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("getProjectJobTrace", "unable to establish a connection", err)
+		return nil, fmt.Errorf("unable to establish a connection: %v", err)
+	}
+
+	projectId := int(d.EqualsQuals["project_id"].GetInt64Value())
+	jobId := h.Item.(*api.Job).ID
+	plugin.Logger(ctx).Debug("getProjectJobTrace", "projectId", projectId, "jobId", jobId)
+
+	traceReader, resp, err := conn.Jobs.GetTraceFile(projectId, jobId)
+	if err != nil {
+		plugin.Logger(ctx).Error("getProjectJobTrace", "projectId", projectId, "jobId", jobId, "resp", resp, "error", err)
+		return nil, fmt.Errorf("unable to obtain trace of job %d for project_id %d\n%v", jobId, projectId, err)
+	}
+
+	traceBytes, err := io.ReadAll(traceReader)
+	if err != nil {
+		plugin.Logger(ctx).Error("getProjectJobTrace", "projectId", projectId, "jobId", jobId, "error", err)
+		return nil, fmt.Errorf("failed to read trace of job %d for project_id %d\n%v", jobId, projectId, err)
+	}
+	trace := string(traceBytes)
+	maxLen := 1073741824 // Retrieved from `select character_octet_length from information_schema.columns where data_type = 'text' and table_schema = 'gitlab' and column_name = 'trace';`
+
+	if len(trace) > maxLen {
+		plugin.Logger(ctx).Debug("getProjectJobTrace", "truncating trace from", len(trace), "to", maxLen)
+		trace = trace[:maxLen]
+	}
+	plugin.Logger(ctx).Debug("getProjectJobTrace", "completed successfully", "trace", trace[:int(math.Min(20, float64(len(trace))))])
+	return trace, nil
 }
 
 // Column Function
@@ -231,12 +268,19 @@ func projectJobColumns() []*plugin.Column {
 		{
 			Name:        "failure_reason",
 			Type:        proto.ColumnType_STRING,
-			Description: "The reason for the jobs failure (if failed).",
+			Description: "The reason for the job's failure (if failed).",
 		},
 		{
 			Name:        "tag",
 			Type:        proto.ColumnType_BOOL,
 			Description: "Indicates if the job was started by a tag.",
+		},
+		{
+			Name:        "trace",
+			Type:        proto.ColumnType_STRING,
+			Description: "The trace (aka log) of the job.",
+			Hydrate:     getProjectJobTrace,
+			Transform:   transform.FromValue(),
 		},
 	}
 }
