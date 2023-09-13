@@ -1,8 +1,11 @@
 ## vNext [tbd]
 
-_Enhancements_
-
+_What's new?_
 - Added new `trace` column to the `gitlab_project_job` table - Thanks [@pdecat](https://github.com/pdecat)
+
+_Enhancements_
+- Updated: Recompiled with [steampipe-plugin-sdk v5.5.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v551-2023-07-26)
+- Updated: Recompiled with [xanzy/go-gitlab v0.91.1](https://github.com/xanzy/go-gitlab/releases/tag/v0.91.1)
 
 ## v0.5.1 [2023-09-07]
 
