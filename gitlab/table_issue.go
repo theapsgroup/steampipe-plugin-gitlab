@@ -231,6 +231,7 @@ func issueColumns() []*plugin.Column {
 			Name:        "iid",
 			Type:        proto.ColumnType_INT,
 			Description: "The instance ID of the Issue.",
+			Transform:   transform.FromField("IID"),
 		},
 		{
 			Name:        "title",

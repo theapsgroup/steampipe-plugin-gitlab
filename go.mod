@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.5.1
-	github.com/xanzy/go-gitlab v0.77.0
+	github.com/xanzy/go-gitlab v0.91.1
 )
 
 require (
