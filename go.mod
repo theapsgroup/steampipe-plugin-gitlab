@@ -3,7 +3,7 @@ module steampipe-plugin-gitlab
 go 1.21
 
 require (
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.6.0
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.6.1
 	github.com/xanzy/go-gitlab v0.91.1
 )
 
