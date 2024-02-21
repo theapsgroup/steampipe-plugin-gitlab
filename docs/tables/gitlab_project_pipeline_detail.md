@@ -12,7 +12,7 @@ However, **you must specify** a `project_id` and an `id` (for the pipeline) in t
 select
   *
 from
-  gitlab_project_pipeline
+  gitlab_project_pipeline_detail
 where
   project_id = 123
 and
