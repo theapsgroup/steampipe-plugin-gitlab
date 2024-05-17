@@ -17,6 +17,18 @@ where
   project_id = 123;  
 ```
 
+### List all files/folders for the development branch/tag in project repository
+
+```sql
+select
+  *
+from
+  gitlab_project_repository
+where
+  project_id = 123
+  AND ref = 'development';  
+```
+
 ### List all files for a project repository
 
 ```sql
