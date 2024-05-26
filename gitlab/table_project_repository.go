@@ -19,6 +19,11 @@ func tableProjectRepository() *plugin.Table {
 					Name:    "project_id",
 					Require: plugin.Required,
 				},
+				{
+					Name:      "ref",
+					Require:   plugin.Optional,
+					Operators: []string{"="},
+				},
 			},
 			Hydrate: listRepositoryTree,
 		},
@@ -42,6 +47,12 @@ func listRepositoryTree(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 			PerPage: 50,
 		},
 		Recursive: api.Bool(true),
+	}
+
+	if d.EqualsQualString("ref") != "" {
+		ref := api.String(d.EqualsQualString("ref"))
+		opt.Ref = ref
+		plugin.Logger(ctx).Debug("listRepositoryTree", "filter[ref]", *ref)
 	}
 
 	for {
@@ -99,6 +110,12 @@ func repoColumns() []*plugin.Column {
 			Name:        "mode",
 			Type:        proto.ColumnType_STRING,
 			Description: "The mode of the file or folder within the repository",
+		},
+		{
+			Name:        "ref",
+			Type:        proto.ColumnType_STRING,
+			Description: "The name of a repository branch or tag or, if not given, the default branch",
+			Transform:   transform.FromQual("ref"),
 		},
 		{
 			Name:        "project_id",
