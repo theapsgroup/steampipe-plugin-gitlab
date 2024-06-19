@@ -9,7 +9,7 @@ _Bug fixes_
 _Dependencies_
 - Recompiled plugin with Go version `1.22`.
 - Upgraded to [steampipe-plugin-sdk v5.10.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v5101-2024-05-09)
-- Upgraded to [xanzy/go-gitlab v0.96.0](
+- Upgraded to [xanzy/go-gitlab v0.105.0](https://github.com/xanzy/go-gitlab/releases/tag/v0.105.0)
 
 ## v0.6.0 [2023-10-02]
 
