@@ -1,3 +1,8 @@
+## v0.7.0 [TBD]
+
+_What's new?_
+- Added `ref` column to `gitlab_project_repository` table, allowing you to also specify a non-default ref. Thanks [@dvaneson](https://github.com/dvaneson)
+
 ## v0.6.0 [2023-10-02]
 
 _Dependencies_
