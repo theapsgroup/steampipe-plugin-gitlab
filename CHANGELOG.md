@@ -3,6 +3,9 @@
 _What's new?_
 - Added `ref` column to `gitlab_project_repository` table, allowing you to also specify a non-default ref. Thanks [@dvaneson](https://github.com/dvaneson)
 
+_Bug fixes_
+- Project statistics should now be correctly reported on the `gitlab_project` table. [#69](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/69)
+
 ## v0.6.0 [2023-10-02]
 
 _Dependencies_
