@@ -1,4 +1,4 @@
-module steampipe-plugin-gitlab
+module github.com/theapsgroup/steampipe-plugin-gitlab
 
 go 1.21
 
