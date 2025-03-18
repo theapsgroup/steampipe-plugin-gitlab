@@ -3,11 +3,12 @@ package gitlab
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
-	"strings"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 func tableBranch() *plugin.Table {

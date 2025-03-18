@@ -3,10 +3,11 @@ package gitlab
 import (
 	"context"
 	"fmt"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 func tableMergeRequestChange() *plugin.Table {
@@ -41,7 +42,7 @@ func listChanges(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData
 		return nil, fmt.Errorf("unable to obtain changes for merge request %d for project_id %d\n%v", iid, projectId, err)
 	}
 
-	for _, change := range mergeRequest.Changes {
+	for _, change := range mergeRequest.State {
 		d.StreamListItem(ctx, change)
 	}
 

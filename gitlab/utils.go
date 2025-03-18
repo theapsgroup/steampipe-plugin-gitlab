@@ -3,12 +3,13 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 const publicGitLabBaseUrl = "https://gitlab.com/api/v4"
