@@ -6,6 +6,11 @@ _What's new?_
 _Bug fixes_
 - Project statistics should now be correctly reported on the `gitlab_project` table. [#69](https://github.com/theapsgroup/steampipe-plugin-gitlab/issues/69)
 
+_Dependencies_
+
+- Updated: Recompiled with Go version 1.23.1
+- Updated: Moved from [xanzy/go-gitlab](https://github.com/xanzy/go-gitlab/releases/tag/v0.91.1) to [gitlab-org/api/client-go](https://gitlab.com/gitlab-org/api/client-go/-/releases/v0.126.0)
+
 ## v0.6.0 [2023-10-02]
 
 _Dependencies_
