@@ -3,10 +3,11 @@ package gitlab
 import (
 	"context"
 	"fmt"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 func tableGroupVariable() *plugin.Table {
@@ -86,7 +87,8 @@ func getGroupVar(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData
 	key := d.EqualsQuals["key"].GetStringValue()
 	plugin.Logger(ctx).Debug("getGroupVar", "groupId", groupId, "key", key)
 
-	v, _, err := conn.GroupVariables.GetVariable(groupId, key)
+	options := &api.GetGroupVariableOptions{}
+	v, _, err := conn.GroupVariables.GetVariable(groupId, key, options, nil)
 	if err != nil {
 		plugin.Logger(ctx).Error("getGroupVar", "groupId", groupId, "key", key, "error", err)
 		return nil, fmt.Errorf("unable to obtain group level variable %s for group_id %d\n%v", key, groupId, err)

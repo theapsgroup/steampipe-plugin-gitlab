@@ -3,13 +3,14 @@ package gitlab
 import (
 	"context"
 	"fmt"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
-func tableMergeRequestChange() *plugin.Table {
+func tableListMergeRequestDiffs() *plugin.Table {
 	return &plugin.Table{
 		Name:        "gitlab_merge_request_change",
 		Description: "Obtain information about all changes associated with a specific merge request from within the GitLab instance.",
@@ -35,13 +36,13 @@ func listChanges(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData
 	projectId := int(q["project_id"].GetInt64Value())
 
 	plugin.Logger(ctx).Debug("listChanges", "projectId", projectId, "iid", iid)
-	mergeRequest, _, err := conn.MergeRequests.GetMergeRequest(projectId, iid, &api.GetMergeRequestsOptions{})
+	mergeRequestDiffs, _, err := conn.MergeRequests.ListMergeRequestDiffs(projectId, iid, &api.ListMergeRequestDiffsOptions{})
 	if err != nil {
 		plugin.Logger(ctx).Error("listChanges", "projectId", projectId, "iid", iid, "error", err)
 		return nil, fmt.Errorf("unable to obtain changes for merge request %d for project_id %d\n%v", iid, projectId, err)
 	}
 
-	for _, change := range mergeRequest.Changes {
+	for _, change := range mergeRequestDiffs {
 		d.StreamListItem(ctx, change)
 	}
 

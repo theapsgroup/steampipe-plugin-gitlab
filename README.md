@@ -97,4 +97,4 @@ All contributions are subject to the [Apache 2.0 open source license](https://gi
 
 ## Credits
 
-GitLab API Wrapper [xanzy/go-gitlab](https://github.com/xanzy/go-gitlab) (licensed separately using this [Apache License](https://github.com/xanzy/go-gitlab/blob/master/LICENSE))
+GitLab API Wrapper [gitlab-org/api/client-go](https://gitlab.com/gitlab-org/api/client-go) (licensed separately using this [Apache License](https://gitlab.com/gitlab-org/api/client-go/-/blob/main/LICENSE))
