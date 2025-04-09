@@ -3,17 +3,22 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	api "github.com/xanzy/go-gitlab"
 )
 
 const publicGitLabBaseUrl = "https://gitlab.com/api/v4"
 
 func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
+	cacheKey := "gitlab"
+	if cachedData, ok := d.ConnectionCache.Get(ctx, cacheKey); ok {
+		return cachedData.(*api.Client), nil
+	}
 	baseUrl := os.Getenv("GITLAB_ADDR")
 	token := os.Getenv("GITLAB_TOKEN")
 
@@ -42,6 +47,9 @@ func connect(ctx context.Context, d *plugin.QueryData) (*api.Client, error) {
 		plugin.Logger(ctx).Error("unable to create client", "baseUrl", baseUrl, "error", err)
 		return nil, err
 	}
+
+	// Save to cache
+	d.ConnectionCache.Set(ctx, cacheKey, client)
 
 	return client, nil
 }
