@@ -37,7 +37,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gitlab_instance_variable":          tableInstanceVariable(),
 			"gitlab_issue":                      tableIssue(),
 			"gitlab_merge_request":              tableMergeRequest(),
-			"gitlab_merge_request_change":       tableMergeRequestChange(),
+			"gitlab_merge_request_diffs":        tableListMergeRequestDiffs(),
 			"gitlab_my_event":                   tableMyEvents(),
 			"gitlab_my_issue":                   tableMyIssue(),
 			"gitlab_my_project":                 tableMyProject(),

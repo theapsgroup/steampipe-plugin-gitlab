@@ -3,10 +3,11 @@ package gitlab
 import (
 	"context"
 	"fmt"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 func tableIssue() *plugin.Table {
@@ -156,7 +157,7 @@ func addOptionalProjectIssueQualifiers(ctx context.Context, opts *api.ListProjec
 
 	if q["assignee_id"] != nil {
 		assigneeId := int(q["assignee_id"].GetInt64Value())
-		opts.AssigneeID = api.AssigneeID(assigneeId)
+		opts.AssigneeID = &assigneeId
 		plugin.Logger(ctx).Debug("listProjectIssues", "filter[assignee_id]", assigneeId)
 	}
 

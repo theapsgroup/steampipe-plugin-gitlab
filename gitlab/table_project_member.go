@@ -3,11 +3,12 @@ package gitlab
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
-	"time"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 type ProjectMember struct {

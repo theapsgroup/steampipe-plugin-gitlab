@@ -3,11 +3,12 @@ package gitlab
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	api "github.com/xanzy/go-gitlab"
-	"strings"
+	api "gitlab.com/gitlab-org/api/client-go"
 )
 
 func tableCommit() *plugin.Table {
@@ -89,7 +90,7 @@ func getCommit(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	id := d.EqualsQuals["id"].GetStringValue()
 	plugin.Logger(ctx).Debug("getCommit", "projectId", projectId, "commitId", id)
 
-	commit, _, err := conn.Commits.GetCommit(projectId, id)
+	commit, _, err := conn.Commits.GetCommit(projectId, id, nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "404") {
 			plugin.Logger(ctx).Warn("getCommit", "projectId", projectId, "commitId", id, "no project was found, returning empty result set")
